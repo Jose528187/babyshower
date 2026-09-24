@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#78afe2">
+    <title>Lista de Regalos · Baby Shower de Liam José</title>
+    <style>
+        :root {
+            --blue: #78afe2;
+            --blue-dark: #4f83b5;
+            --blue-pale: #edf7ff;
+            --brown: #996b4d;
+            --brown-light: #cba88f;
+            --cream: #fffaf4;
+            --ink: #55463d;
+            --line: #eadfd5;
+            --white: #fff;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at 10% 10%, #ffffff 0 70px, transparent 71px),
+                linear-gradient(180deg, #eef8ff 0, #fffaf4 55%, #f8efe8 100%);
+            color: var(--ink);
+            font-family: "Trebuchet MS", Arial, sans-serif
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px 15px 60px;
+            position: relative
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, .94);
+            border: 1px solid #d7eafa;
+            border-radius: 30px;
+            padding: 40px 20px 34px;
+            text-align: center;
+            box-shadow: 0 16px 40px rgba(79, 131, 181, .12)
+        }
+
+        .decor {
+            position: absolute;
+            pointer-events: none;
+            width: 340px;
+            opacity: .9
+        }
+
+        .decor-top {
+            top: -8px;
+            right: -10px
+        }
+
+        .decor-bottom {
+            bottom: -30px;
+            left: -10px;
+            opacity: .65
+        }
+
+        .kicker {
+            font-size: 13px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--brown);
+            font-weight: bold
+        }
+
+        h1 {
+            margin: 9px 0 0;
+            font-family: Georgia, serif;
+            color: var(--brown);
+            font-size: clamp(32px, 6vw, 54px);
+            font-weight: normal
+        }
+
+        .name {
+            font-family: Georgia, serif;
+            font-style: italic;
+            color: var(--blue);
+            font-size: clamp(38px, 7vw, 64px);
+            font-weight: bold;
+            margin-top: 2px
+        }
+
+        .date {
+            margin-top: 12px;
+            color: var(--brown);
+            font-family: Georgia, serif;
+            font-size: 17px
+        }
+
+        .message {
+            max-width: 720px;
+            margin: 18px auto 0;
+            font-size: 15px;
+            line-height: 1.65
+        }
+
+        .info {
+            display: inline-block;
+            margin-top: 15px;
+            background: var(--blue-pale);
+            border: 1px solid #d7eafa;
+            border-radius: 18px;
+            padding: 12px 18px;
+            color: #5b6d7c;
+            font-size: 13px
+        }
+
+        .toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            padding: 14px 0;
+            background: rgba(255, 250, 244, .90);
+            backdrop-filter: blur(12px)
+        }
+
+        .tools {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap
+        }
+
+        .search {
+            flex: 1;
+            min-width: 220px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 12px 15px;
+            font-size: 15px;
+            background: white;
+            outline: none
+        }
+
+        .search:focus {
+            border-color: var(--blue)
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 14px;
+            padding: 12px 16px;
+            background: var(--blue);
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer
+        }
+
+        .btn.brown {
+            background: var(--brown)
+        }
+
+        .stats {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px
+        }
+
+        .stat {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            padding: 8px 12px;
+            font-size: 13px
+        }
+
+        .category {
+            margin-top: 25px
+        }
+
+        .category h2 {
+            margin: 0 0 11px;
+            padding: 0 0 9px;
+            border-bottom: 2px solid #d6eafb;
+            color: var(--brown);
+            font-family: Georgia, serif;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 9px
+        }
+
+        .cat-icon {
+            font-family: system-ui
+        }
+
+        .grid {
+            display: grid;
+            gap: 9px
+        }
+
+        .gift-card {
+            display: grid;
+            grid-template-columns: 32px minmax(0, 1fr) 112px 110px;
+            gap: 10px;
+            align-items: center;
+            background: rgba(255, 255, 255, .95);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 10px 12px;
+            transition: .2s
+        }
+
+        .gift-card:hover {
+            box-shadow: 0 7px 20px rgba(153, 107, 77, .10);
+            transform: translateY(-1px)
+        }
+
+        .gift-card input[type=checkbox] {
+            width: 19px;
+            height: 19px;
+            accent-color: var(--blue)
+        }
+
+        .gift-main {
+            min-width: 0
+        }
+
+        .gift-name {
+            font-weight: bold;
+            color: #55463d
+        }
+
+        .ref {
+            font-size: 12px;
+            color: #8a7d74;
+            margin-top: 4px
+        }
+
+        .reserve {
+            border: 0;
+            border-radius: 11px;
+            background: var(--blue);
+            color: white;
+            font-weight: bold;
+            padding: 9px 8px;
+            cursor: pointer
+        }
+
+        .reserve:hover {
+            background: var(--blue-dark)
+        }
+
+        .state {
+            font-size: 11px;
+            text-align: center;
+            border-radius: 10px;
+            padding: 6px 7px;
+            background: #edf8ef;
+            color: #46744e;
+            font-weight: bold
+        }
+
+        .gift-card.reserved {
+            background: #f8f1ec;
+            border-color: #dcc5b5
+        }
+
+        .gift-card.reserved .reserve {
+            background: #bda18d
+        }
+
+        .gift-card.mine .reserve {
+            background: #fff;
+            color: var(--brown);
+            border: 1px solid #dcc5b5
+        }
+
+        .gift-card.mine .reserve:hover {
+            background: #f8f1ec
+        }
+
+        .gift-card.reserved .state {
+            background: #f0e2d8;
+            color: #815a43
+        }
+
+        .footer {
+            text-align: center;
+            margin: 35px auto 0;
+            max-width: 750px;
+            color: #786a61;
+            font-family: Georgia, serif;
+            font-size: 14px;
+            line-height: 1.6
+        }
+
+        .hidden {
+            display: none !important
+        }
+
+        .btn {
+            opacity: .75;
+            transition: .15s
+        }
+
+        .btn:hover,
+        .btn.active {
+            opacity: 1
+        }
+
+        .btn.active {
+            box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .15)
+        }
+
+        .gift-card.mine {
+            background: #eef7ff;
+            border-color: #b9d8f3
+        }
+
+        .gift-card.mine .state {
+            background: #dcecfb;
+            color: var(--blue-dark)
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px 10px;
+            color: #8a7d74
+        }
+
+        .notice {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: #fff4dd;
+            border: 1px solid #f0d9a8;
+            color: #7a5b1c;
+            font-size: 13px
+        }
+
+        /* Modal de reserva */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: rgba(85, 70, 61, .45);
+            backdrop-filter: blur(4px)
+        }
+
+        .modal-box {
+            width: 100%;
+            max-width: 430px;
+            background: var(--cream);
+            border-radius: 22px;
+            padding: 24px 22px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, .2)
+        }
+
+        .modal-box h3 {
+            margin: 0;
+            font-family: Georgia, serif;
+            color: var(--brown);
+            font-size: 22px;
+            font-weight: normal
+        }
+
+        .modal-gift {
+            margin: 6px 0 16px;
+            color: var(--blue-dark);
+            font-weight: bold
+        }
+
+        .field {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #786a61
+        }
+
+        .field input,
+        .field textarea {
+            display: block;
+            width: 100%;
+            margin-top: 5px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 11px 13px;
+            font: inherit;
+            font-size: 15px;
+            color: var(--ink);
+            background: #fff;
+            outline: none
+        }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color: var(--blue)
+        }
+
+        .field textarea {
+            resize: vertical;
+            min-height: 64px
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 9px;
+            justify-content: flex-end;
+            margin-top: 6px
+        }
+
+        .modal-actions .btn {
+            opacity: 1
+        }
+
+        .btn.ghost {
+            background: transparent;
+            color: var(--brown);
+            border: 1px solid var(--line)
+        }
+
+        .btn:disabled {
+            opacity: .5;
+            cursor: wait
+        }
+
+        .pin-input {
+            max-width: 130px;
+            letter-spacing: 8px;
+            font-size: 20px !important;
+            text-align: center
+        }
+
+        .hint {
+            display: block;
+            margin-top: 5px;
+            font-size: 11px;
+            color: #9a8b80
+        }
+
+        .cancel-text {
+            font-size: 14px;
+            line-height: 1.55;
+            margin: 0 0 12px
+        }
+
+        .form-error {
+            color: #b24a3a;
+            font-size: 13px;
+            min-height: 18px;
+            margin: 0 0 6px
+        }
+
+        .privacy {
+            font-size: 11px;
+            color: #9a8b80;
+            margin: 4px 0 12px;
+            line-height: 1.5
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 22px;
+            transform: translateX(-50%);
+            z-index: 110;
+            background: var(--ink);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 14px;
+            font-size: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+            max-width: calc(100% - 32px);
+            text-align: center
+        }
+
+        @media(max-width:720px) {
+            .gift-card {
+                grid-template-columns: 30px 1fr;
+                gap: 8px
+            }
+
+            .reserve,
+            .state {
+                grid-column: 2
+            }
+
+            .hero {
+                padding: 34px 15px 30px
+            }
+
+            .decor {
+                width: 250px
+            }
+
+            .toolbar {
+                padding: 10px 0 8px
+            }
+
+            .tools {
+                gap: 6px
+            }
+
+            .search {
+                min-width: 100%;
+                padding: 10px 13px
+            }
+
+            .tools .btn {
+                flex: 1;
+                padding: 9px 6px;
+                font-size: 13px
+            }
+
+            .stats {
+                gap: 5px;
+                margin-top: 7px
+            }
+
+            .stat {
+                padding: 5px 8px;
+                font-size: 12px
+            }
+        }
+
+        @media print {
+            .toolbar {
+                display: none
+            }
+
+            body {
+                background: #fff
+            }
+
+            .page {
+                max-width: none
+            }
+
+            .hero {
+                box-shadow: none
+            }
+
+            .gift-card {
+                break-inside: avoid
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <header class="hero">
+
+            <svg class="decor decor-top" viewBox="0 0 500 180" aria-hidden="true">
+                <path d="M35 130 C55 92 105 92 125 130 C145 92 195 92 215 130" fill="none" stroke="#8bbbe8" stroke-width="5" stroke-linecap="round" />
+                <g fill="#a87554" opacity=".9">
+                    <path d="M365 45 c-12-18-42-5-32 15 10 19 32 28 32 28s22-9 32-28c10-20-20-33-32-15z" />
+                    <path d="M425 95 c-8-12-28-4-22 11 6 13 22 19 22 19s16-6 22-19c6-15-14-23-22-11z" />
+                </g>
+                <g fill="#79afe2" opacity=".95">
+                    <path d="M285 85 c-10-15-35-5-27 13 8 16 27 23 27 23s19-7 27-23c8-18-17-28-27-13z" />
+                </g>
+            </svg>
+
+            <div class="kicker">Baby Shower</div>
+            <h1>Lista de Regalos</h1>
+            <div class="name">Liam José</div>
+            <div class="date">Sábado · 24 de octubre de 2026 · 15:00 hs</div>
+            <p class="message">Elegimos esta pequeña lista como guía para quienes quieran acompañarnos con un detalle para Liam José.</p>
+            <div class="info">💙 La selección es completamente opcional · 🤎 Al reservar, el artículo queda bloqueado para todos</div>
+        </header>
+
+        <div class="toolbar">
+            <div class="tools">
+                <input id="search" class="search" type="search" placeholder="🔎 Buscar un regalo...">
+                <button class="btn active" data-filter="all">Todos</button>
+                <button class="btn" data-filter="available">Disponibles</button>
+                <button class="btn brown" data-filter="mine">Mis reservas</button>
+            </div>
+            <div class="stats">
+                <div class="stat">🎁 Total: <b id="total">—</b></div>
+                <div class="stat">💙 Disponibles: <b id="available">—</b></div>
+                <div class="stat">🤎 Reservados: <b id="reserved">—</b></div>
+            </div>
+        </div>
+        <div id="notice" class="notice hidden"></div>
+
+        <main id="list">
+
+            <section class="category" data-category="Ropa y Vestimenta">
+                <h2><span class="cat-icon">👕</span>Ropa y Vestimenta</h2>
+                <div class="grid">
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="bodies de algodón manga corta">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-0" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-0" class="gift-name">Bodies de algodón manga corta</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="bodies de algodón manga larga">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-1" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-1" class="gift-name">Bodies de algodón manga larga</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="shorts">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-2" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-2" class="gift-name">Shorts</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="monitos">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-3" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-3" class="gift-name">Monitos</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="pijamas">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-4" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-4" class="gift-name">Pijamas</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="mamelucos de una pieza">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-5" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-5" class="gift-name">Mamelucos de una pieza</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="pantalones con pie">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-6" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-6" class="gift-name">Pantalones con pie</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="pantalones sin pie">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-7" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-7" class="gift-name">Pantalones sin pie</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="camisetas interiores">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-8" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-8" class="gift-name">Camisetas interiores</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="camisetas tipo seminario">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-9" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-9" class="gift-name">Camisetas tipo seminario</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="cárdigans">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-10" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-10" class="gift-name">Cárdigans</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="suéteres ligeros">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-11" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-11" class="gift-name">Suéteres ligeros</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="chaquetas">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-12" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-12" class="gift-name">Chaquetas</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="abrigos">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-13" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-13" class="gift-name">Abrigos</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="gorros de algodón">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-14" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-14" class="gift-name">Gorros de algodón</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="sombreros para el sol">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-15" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-15" class="gift-name">Sombreros para el sol</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="medias o calcetines">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-16" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-16" class="gift-name">Medias o calcetines</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="zapatitos de tela o patucos">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-17" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-17" class="gift-name">Zapatitos de tela o patucos</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="baberos de tela">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-18" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-18" class="gift-name">Baberos de tela</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Ropa y Vestimenta" data-name="baberos impermeables o de bandana">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-19" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-19" class="gift-name">Baberos impermeables o de bandana</label>
+                            <div class="ref">📏 0-3 / 3-6 / 3-9 meses</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                </div>
+            </section>
+
+            <section class="category" data-category="Higiene y Cuidado Personal">
+                <h2><span class="cat-icon">🛁</span>Higiene y Cuidado Personal</h2>
+                <div class="grid">
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="pañales desechables">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-20" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-20" class="gift-name">Pañales desechables</label>
+                            <div class="ref">📏 P / M / G</div>
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="pañales de tela">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-21" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-21" class="gift-name">Pañales de tela</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="toallitas húmedas para bebé">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-22" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-22" class="gift-name">Toallitas húmedas para bebé</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="algodón en trozos o toallitas de algodón seco">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-23" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-23" class="gift-name">Algodón en trozos o toallitas de algodón seco</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="crema para la dermatitis de pañal">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-24" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-24" class="gift-name">Crema para la dermatitis de pañal</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="jabón líquido neutro para bebé">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-25" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-25" class="gift-name">Jabón líquido neutro para bebé</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="champú especial para bebés">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-26" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-26" class="gift-name">Champú especial para bebés</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="loción o crema hidratante corporal">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-27" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-27" class="gift-name">Loción o crema hidratante corporal</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="bañera para bebé">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-28" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-28" class="gift-name">Bañera para bebé</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="toalla de baño con capucha">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-29" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-29" class="gift-name">Toalla de baño con capucha</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="esponja natural o suave">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-30" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-30" class="gift-name">Esponja natural o suave</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="cepillo de cerdas suaves para el cabello">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-31" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-31" class="gift-name">Cepillo de cerdas suaves para el cabello</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="bastoncillos de algodón con tope de seguridad">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-32" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-32" class="gift-name">Bastoncillos de algodón con tope de seguridad</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="suero fisiológico en monodosis">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-33" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-33" class="gift-name">Suero fisiológico en monodosis</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="aspirador nasal">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-34" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-34" class="gift-name">Aspirador nasal</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="termómetro digital">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-35" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-35" class="gift-name">Termómetro digital</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Higiene y Cuidado Personal" data-name="alcohol al 70% (para el cuidado del ombligo)">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-36" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-36" class="gift-name">Alcohol al 70% (para el cuidado del ombligo)</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                </div>
+            </section>
+
+            <section class="category" data-category="Alimentación y Lactancia">
+                <h2><span class="cat-icon">🍼</span>Alimentación y Lactancia</h2>
+                <div class="grid">
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="biberones de cristal o plástico libre de bpa">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-37" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-37" class="gift-name">Biberones de cristal o plástico libre de BPA</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="tetinas de flujo lento o adecuado a la edad">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-38" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-38" class="gift-name">Tetinas de flujo lento o adecuado a la edad</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="escobilla para limpiar biberones">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-39" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-39" class="gift-name">Escobilla para limpiar biberones</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="esterilizador de biberones">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-40" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-40" class="gift-name">Esterilizador de biberones</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="calienta biberones eléctrico">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-41" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-41" class="gift-name">Calienta biberones eléctrico</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="dosificador de leche en polvo">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-42" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-42" class="gift-name">Dosificador de leche en polvo</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="almohada o cojín de lactancia">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-43" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-43" class="gift-name">Almohada o cojín de lactancia</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="protectores de lactancia para la madre">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-44" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-44" class="gift-name">Protectores de lactancia para la madre</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="crema para pezones">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-45" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-45" class="gift-name">Crema para pezones</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="extractor de leche materna (manual o eléctrico)">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-46" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-46" class="gift-name">Extractor de leche materna (manual o eléctrico)</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="bolsas de almacenamiento de leche materna">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-47" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-47" class="gift-name">Bolsas de almacenamiento de leche materna</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="paños o toallas de eructo de muselina">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-48" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-48" class="gift-name">Paños o toallas de eructo de muselina</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="chupones o chupetes">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-49" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-49" class="gift-name">Chupones o chupetes</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="cadenita o portachupetes">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-50" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-50" class="gift-name">Cadenita o portachupetes</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia"
+                        data-name="baberos grandes para la etapa de alimentación complementaria">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-51" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-51" class="gift-name">Baberos grandes para la etapa de alimentación complementaria</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="platos y boles con ventosa">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-52" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-52" class="gift-name">Platos y boles con ventosa</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="cucharas de silicona suave">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-53" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-53" class="gift-name">Cucharas de silicona suave</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="vasos de aprendizaje o vaso entrenador">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-54" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-54" class="gift-name">Vasos de aprendizaje o vaso entrenador</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Alimentación y Lactancia" data-name="trona o silla alta para comer">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-55" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-55" class="gift-name">Trona o silla alta para comer</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                </div>
+            </section>
+
+            <section class="category" data-category="Sueño y Descanso">
+                <h2><span class="cat-icon">🌙</span>Sueño y Descanso</h2>
+                <div class="grid">
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="cuna moisés o moisés portátil">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-56" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-56" class="gift-name">Cuna moisés o moisés portátil</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="colchón de cuna firme">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-57" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-57" class="gift-name">Colchón de cuna firme</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="protector de colchón impermeable">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-58" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-58" class="gift-name">Protector de colchón impermeable</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="sábanas ajustables para cuna">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-59" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-59" class="gift-name">Sábanas ajustables para cuna</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="mantas ligeras de algodón">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-60" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-60" class="gift-name">Mantas ligeras de algodón</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="mantas térmicas o acolchadas">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-61" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-61" class="gift-name">Mantas térmicas o acolchadas</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="sacos de dormir para bebé">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-62" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-62" class="gift-name">Sacos de dormir para bebé</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="mantas o muselinas para envolver al bebé">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-63" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-63" class="gift-name">Mantas o muselinas para envolver al bebé</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="monitor de audio o cámara de video para bebés">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-64" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-64" class="gift-name">Monitor de audio o cámara de video para bebés</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="luz de noche tenue">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-65" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-65" class="gift-name">Luz de noche tenue</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="máquina de ruido blanco">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-66" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-66" class="gift-name">Máquina de ruido blanco</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="móvil musical para la cuna">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-67" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-67" class="gift-name">Móvil musical para la cuna</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Sueño y Descanso" data-name="humidificador de aire">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-68" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-68" class="gift-name">Humidificador de aire</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                </div>
+            </section>
+
+            <section class="category" data-category="Paseo y Viaje">
+                <h2><span class="cat-icon">🚼</span>Paseo y Viaje</h2>
+                <div class="grid">
+                    <article class="gift-card" data-category="Paseo y Viaje" data-name="bolso o pañalera">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-69" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-69" class="gift-name">Bolso o pañalera</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Paseo y Viaje" data-name="cambiador portátil plegable">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-70" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-70" class="gift-name">Cambiador portátil plegable</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Paseo y Viaje" data-name="portabebés ergonómico o fular de porteo">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-71" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-71" class="gift-name">Portabebés ergonómico o fular de porteo</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Paseo y Viaje" data-name="protector para la lluvia del cochecito">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-72" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-72" class="gift-name">Protector para la lluvia del cochecito</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Paseo y Viaje" data-name="mosquitero">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-73" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-73" class="gift-name">Mosquitero</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Paseo y Viaje" data-name="sombrilla para el cochecito">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-74" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-74" class="gift-name">Sombrilla para el cochecito</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                </div>
+            </section>
+
+            <section class="category" data-category="Juego, Estimulación y Seguridad">
+                <h2><span class="cat-icon">🧩</span>Juego, Estimulación y Seguridad</h2>
+                <div class="grid">
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="gimnasio para suelo con arcos de juego">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-75" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-75" class="gift-name">Gimnasio para suelo con arcos de juego</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="manta de actividades">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-76" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-76" class="gift-name">Manta de actividades</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="juguetes sensoriales de tela">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-77" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-77" class="gift-name">Juguetes sensoriales de tela</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="libros de cartón o de baño">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-78" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-78" class="gift-name">Libros de cartón o de baño</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="mordedores de silicona refrigerables">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-79" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-79" class="gift-name">Mordedores de silicona refrigerables</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="sonajeros ligeros">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-80" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-80" class="gift-name">Sonajeros ligeros</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="parque infantil o corralito portátil">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-81" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-81" class="gift-name">Parque infantil o corralito portátil</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="espejo de juguete irrompible">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-82" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-82" class="gift-name">Espejo de juguete irrompible</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="bloques de construcción grandes y suaves">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-83" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-83" class="gift-name">Bloques de construcción grandes y suaves</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="protectores de enchufes">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-84" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-84" class="gift-name">Protectores de enchufes</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="esquineros de silicona para muebles">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-85" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-85" class="gift-name">Esquineros de silicona para muebles</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="bloqueadores de puertas y cajones">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-86" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-86" class="gift-name">Bloqueadores de puertas y cajones</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad"
+                        data-name="orinal o bacinica (para etapas posteriores)">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-87" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-87" class="gift-name">Orinal o bacinica (para etapas posteriores)</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad"
+                        data-name="reductor de baño o asiento de entrenamiento">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-88" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-88" class="gift-name">Reductor de baño o asiento de entrenamiento</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="maleta o organizador de juguetes">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-89" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-89" class="gift-name">Maleta o organizador de juguetes</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="termómetro ambiental para la habitación">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-90" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-90" class="gift-name">Termómetro ambiental para la habitación</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                    <article class="gift-card" data-category="Juego, Estimulación y Seguridad" data-name="cesto para ropa sucia de bebé">
+                        <div class="check-wrap">
+                            <input type="checkbox" id="gift-91" aria-label="Seleccionar regalo" disabled>
+                        </div>
+                        <div class="gift-main">
+                            <label for="gift-91" class="gift-name">Cesto para ropa sucia de bebé</label>
+
+                        </div>
+
+                        <button class="reserve" type="button" aria-label="Reservar este regalo">Reservar</button>
+                        <span class="state available-state">Disponible</span>
+                    </article>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="footer">
+
+            <svg class="decor decor-bottom" viewBox="0 0 600 180" aria-hidden="true">
+                <path d="M70 65 C120 20 170 20 220 65 C270 110 320 110 370 65 C420 20 470 20 520 65" fill="none" stroke="#d8c1ae" stroke-width="4"
+                    stroke-linecap="round" />
+                <g fill="#82b6e4">
+                    <circle cx="90" cy="110" r="7" />
+                    <circle cx="140" cy="90" r="5" />
+                    <circle cx="485" cy="110" r="7" />
+                </g>
+                <g fill="#9d6d4e">
+                    <circle cx="115" cy="135" r="5" />
+                    <circle cx="460" cy="88" r="5" />
+                </g>
+            </svg>
+
+            <b>Baby Shower de Liam José</b><br>
+            Jujuy 555 · CABA<br><br>
+            <small>Tu nombre solo lo ven los papás. Una vez reservado, el artículo aparece como reservado para todos los invitados.
+                ¿Cambiaste de idea? Tocá tu regalo y cancelalo con tu PIN.</small>
+        </footer>
+    </div>
+
+    <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <form id="reserve-form" class="modal-box" novalidate>
+            <h3 id="modal-title">Reservar regalo</h3>
+            <div id="modal-gift" class="modal-gift"></div>
+            <label class="field">Tu nombre y apellido *
+                <input id="f-name" name="nombre" required minlength="2" maxlength="60" autocomplete="name">
+            </label>
+            <label class="field">Teléfono o email (opcional)
+                <input id="f-contact" name="contacto" maxlength="80" autocomplete="tel">
+            </label>
+            <label class="field">Mensaje para Liam José (opcional)
+                <textarea id="f-message" name="mensaje" maxlength="300"></textarea>
+            </label>
+            <label class="field">Elegí un PIN de 4 números *
+                <input id="f-pin" class="pin-input" name="pin" required inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" placeholder="••••">
+                <span class="hint">Lo vas a necesitar si querés cancelar la reserva desde otro dispositivo.</span>
+            </label>
+            <p class="privacy">Tu nombre solo será visible para los papás. Para evitar reservas duplicadas se registra la fecha, el dispositivo y la dirección IP.</p>
+            <p id="form-error" class="form-error" role="alert"></p>
+            <div class="modal-actions">
+                <button type="button" class="btn ghost" data-close>Volver</button>
+                <button type="submit" class="btn" id="modal-submit">Confirmar reserva</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="cancel-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="cancel-title">
+        <form id="cancel-form" class="modal-box" novalidate>
+            <h3 id="cancel-title">Cancelar reserva</h3>
+            <div id="cancel-gift" class="modal-gift"></div>
+            <p id="cancel-text" class="cancel-text"></p>
+            <label class="field" id="cancel-pin-field">PIN de 4 números
+                <input id="c-pin" class="pin-input" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" placeholder="••••">
+            </label>
+            <p id="cancel-error" class="form-error" role="alert"></p>
+            <div class="modal-actions">
+                <button type="button" class="btn ghost" data-close>Volver</button>
+                <button type="submit" class="btn brown" id="cancel-submit">Cancelar reserva</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="toast" class="toast hidden" role="status"></div>
+
+    <script type="module" src="app.js"></script>
+</body>
+
+</html>

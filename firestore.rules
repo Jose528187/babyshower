@@ -1,0 +1,95 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Cambiá este email por el tuyo (el mismo que en firebase-config.js → ADMIN_EMAILS).
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in ['jamp528@gmail.com'];
+    }
+
+    function publicPath(giftId) {
+      return /databases/$(database)/documents/reservas/$(giftId);
+    }
+    function privatePath(rid) {
+      return /databases/$(database)/documents/reservas_privadas/$(rid);
+    }
+    function cancelPath(rid) {
+      return /databases/$(database)/documents/cancelaciones/$(rid);
+    }
+    function optString(v, max) {
+      return v == null || (v is string && v.size() <= max);
+    }
+
+    // ---------- Público: qué está reservado (no quién) ----------
+    // "create" solo aplica si el documento no existe → imposible reservar dos veces el mismo regalo.
+    match /reservas/{giftId} {
+      allow read: if true;
+      allow create: if giftId.size() <= 100
+        && request.resource.data.keys().hasOnly(['fecha', 'token'])
+        && request.resource.data.token is string
+        && request.resource.data.token.matches('^[0-9a-f]{24}$')
+        && request.resource.data.fecha == request.time
+        && existsAfter(privatePath(giftId + '__' + request.resource.data.token));
+      // Se borra (libera) solo si en la misma operación se registra una cancelación válida.
+      allow delete: if existsAfter(cancelPath(giftId + '__' + resource.data.token));
+      allow update: if false;
+    }
+
+    // ---------- Privado: nombre, contacto, IP, dispositivo (solo admin) ----------
+    // Id = regaloId__token. Se conserva siempre como historial.
+    match /reservas_privadas/{rid} {
+      allow read: if isAdmin();
+      allow delete: if isAdmin();
+      allow update: if false;
+      allow create: if request.resource.data.keys().hasOnly([
+             'regaloId', 'token', 'regalo', 'categoria', 'nombre', 'contacto', 'mensaje', 'pinHash',
+             'ip', 'ciudad', 'region', 'pais', 'proveedor',
+             'dispositivoId', 'navegador', 'idioma', 'plataforma', 'zonaHoraria',
+             'pantalla', 'referencia', 'fechaLocal', 'fecha'])
+        && rid == request.resource.data.regaloId + '__' + request.resource.data.token
+        && !exists(publicPath(request.resource.data.regaloId))
+        && getAfter(publicPath(request.resource.data.regaloId)).data.token == request.resource.data.token
+        && request.resource.data.pinHash is string
+        && request.resource.data.pinHash.matches('^[0-9a-f]{64}$')
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() >= 2
+        && request.resource.data.nombre.size() <= 60
+        && request.resource.data.regalo is string
+        && request.resource.data.regalo.size() <= 150
+        && optString(request.resource.data.mensaje, 300)
+        && optString(request.resource.data.contacto, 80)
+        && request.resource.data.fecha == request.time;
+    }
+
+    // ---------- Cancelaciones (historial, solo admin lo lee) ----------
+    // El invitado envía su PIN; la regla verifica sha256(pin:token) contra el hash guardado.
+    match /cancelaciones/{rid} {
+      allow read: if isAdmin();
+      allow update, delete: if false;
+      allow create: if rid == request.resource.data.regaloId + '__' + request.resource.data.token
+        && get(publicPath(request.resource.data.regaloId)).data.token == request.resource.data.token
+        && !existsAfter(publicPath(request.resource.data.regaloId))
+        && request.resource.data.fecha == request.time
+        && (
+          // Cancelación del invitado con su PIN
+          (request.resource.data.porAdmin == false
+            && request.resource.data.keys().hasOnly([
+                 'regaloId', 'token', 'pin', 'porAdmin', 'fecha', 'regalo', 'desdeMismoDispositivo',
+                 'ip', 'ciudad', 'region', 'pais', 'proveedor',
+                 'dispositivoId', 'navegador', 'idioma', 'plataforma', 'zonaHoraria',
+                 'pantalla', 'referencia', 'fechaLocal'])
+            && request.resource.data.pin is string
+            && request.resource.data.pin.matches('^[0-9]{4}$')
+            && hashing.sha256(request.resource.data.pin + ':' + request.resource.data.token).toHexString().lower()
+                 == get(privatePath(rid)).data.pinHash)
+          ||
+          // Liberación desde el panel admin
+          (request.resource.data.porAdmin == true
+            && isAdmin()
+            && request.resource.data.keys().hasOnly(['regaloId', 'token', 'porAdmin', 'fecha', 'regalo', 'adminEmail']))
+        );
+    }
+  }
+}
