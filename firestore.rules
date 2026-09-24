@@ -9,39 +9,82 @@ service cloud.firestore {
         && request.auth.token.email in ['jamp528@gmail.com'];
     }
 
-    function publicPath(giftId) {
-      return /databases/$(database)/documents/reservas/$(giftId);
+    function giftPath(g) {
+      return /databases/$(database)/documents/regalos/$(g);
     }
-    function privatePath(rid) {
+    function resPath(rid) {
+      return /databases/$(database)/documents/reservas/$(rid);
+    }
+    function privPath(rid) {
       return /databases/$(database)/documents/reservas_privadas/$(rid);
-    }
-    function cancelPath(rid) {
-      return /databases/$(database)/documents/cancelaciones/$(rid);
     }
     function optString(v, max) {
       return v == null || (v is string && v.size() <= max);
     }
 
-    // ---------- Público: qué está reservado (no quién) ----------
-    // "create" solo aplica si el documento no existe → imposible reservar dos veces el mismo regalo.
-    match /reservas/{giftId} {
+    // ---------- Catálogo (lo administra el admin, lo ve todo el mundo) ----------
+    match /categorias/{c} {
       allow read: if true;
-      allow create: if giftId.size() <= 100
-        && request.resource.data.keys().hasOnly(['fecha', 'token'])
+      allow write: if isAdmin();
+    }
+
+    function validGift(d) {
+      return d.keys().hasAll(['nombre', 'categoria', 'cantidad', 'activo', 'orden', 'reservados'])
+        && d.keys().hasOnly(['nombre', 'categoria', 'detalle', 'cantidad', 'activo', 'orden', 'reservados', 'ultimoToken'])
+        && d.nombre is string && d.nombre.size() > 0 && d.nombre.size() <= 150
+        && d.categoria is string && d.categoria.size() <= 100
+        && optString(d.get('detalle', null), 150)
+        && d.cantidad is int && d.cantidad >= 1 && d.cantidad <= 99
+        && d.reservados is int && d.reservados >= 0 && d.reservados <= d.cantidad
+        && d.activo is bool
+        && d.orden is number;
+    }
+
+    // Un invitado solo puede mover el contador en ±1, y solo si en la misma operación
+    // se crea (reserva) o se borra (cancelación) la reserva identificada por ultimoToken.
+    function guestCounterChange(g, before, after) {
+      let rid = g + '__' + after.ultimoToken;
+      return after.diff(before).affectedKeys().hasOnly(['reservados', 'ultimoToken'])
+        && after.ultimoToken is string
+        && (
+          (after.reservados == before.reservados + 1 && before.activo == true
+            && !exists(resPath(rid)) && existsAfter(resPath(rid)))
+          ||
+          (after.reservados == before.reservados - 1
+            && exists(resPath(rid)) && !existsAfter(resPath(rid)))
+        );
+    }
+
+    match /regalos/{g} {
+      allow read: if true;
+      allow create: if isAdmin() && validGift(request.resource.data);
+      allow delete: if isAdmin() && resource.data.reservados == 0;
+      allow update: if validGift(request.resource.data)
+        && (isAdmin() || guestCounterChange(g, resource.data, request.resource.data));
+    }
+
+    // ---------- Reservas públicas: una por unidad reservada (no dicen quién) ----------
+    match /reservas/{rid} {
+      allow read: if true;
+      allow create: if isAdmin() || (
+        request.resource.data.keys().hasOnly(['regaloId', 'token', 'fecha'])
         && request.resource.data.token is string
         && request.resource.data.token.matches('^[0-9a-f]{24}$')
+        && rid == request.resource.data.regaloId + '__' + request.resource.data.token
         && request.resource.data.fecha == request.time
-        && existsAfter(privatePath(giftId + '__' + request.resource.data.token));
-      // Se borra (libera) solo si en la misma operación se registra una cancelación válida.
-      allow delete: if existsAfter(cancelPath(giftId + '__' + resource.data.token));
+        && getAfter(giftPath(request.resource.data.regaloId)).data.ultimoToken == request.resource.data.token
+        && getAfter(giftPath(request.resource.data.regaloId)).data.reservados
+             == get(giftPath(request.resource.data.regaloId)).data.reservados + 1
+        && existsAfter(privPath(rid)));
+      // Se libera solo si en la misma operación se registra una cancelación válida.
+      allow delete: if isAdmin() || existsAfter(/databases/$(database)/documents/cancelaciones/$(rid));
       allow update: if false;
     }
 
     // ---------- Privado: nombre, contacto, IP, dispositivo (solo admin) ----------
-    // Id = regaloId__token. Se conserva siempre como historial.
+    // Se conserva siempre como historial.
     match /reservas_privadas/{rid} {
-      allow read: if isAdmin();
-      allow delete: if isAdmin();
+      allow read, delete: if isAdmin();
       allow update: if false;
       allow create: if request.resource.data.keys().hasOnly([
              'regaloId', 'token', 'regalo', 'categoria', 'nombre', 'contacto', 'mensaje', 'pinHash',
@@ -49,8 +92,8 @@ service cloud.firestore {
              'dispositivoId', 'navegador', 'idioma', 'plataforma', 'zonaHoraria',
              'pantalla', 'referencia', 'fechaLocal', 'fecha'])
         && rid == request.resource.data.regaloId + '__' + request.resource.data.token
-        && !exists(publicPath(request.resource.data.regaloId))
-        && getAfter(publicPath(request.resource.data.regaloId)).data.token == request.resource.data.token
+        && !exists(resPath(rid))
+        && existsAfter(resPath(rid))
         && request.resource.data.pinHash is string
         && request.resource.data.pinHash.matches('^[0-9a-f]{64}$')
         && request.resource.data.nombre is string
@@ -69,8 +112,8 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow update, delete: if false;
       allow create: if rid == request.resource.data.regaloId + '__' + request.resource.data.token
-        && get(publicPath(request.resource.data.regaloId)).data.token == request.resource.data.token
-        && !existsAfter(publicPath(request.resource.data.regaloId))
+        && exists(resPath(rid))
+        && !existsAfter(resPath(rid))
         && request.resource.data.fecha == request.time
         && (
           // Cancelación del invitado con su PIN
@@ -83,7 +126,9 @@ service cloud.firestore {
             && request.resource.data.pin is string
             && request.resource.data.pin.matches('^[0-9]{4}$')
             && hashing.sha256(request.resource.data.pin + ':' + request.resource.data.token).toHexString().lower()
-                 == get(privatePath(rid)).data.pinHash)
+                 == get(privPath(rid)).data.pinHash
+            && getAfter(giftPath(request.resource.data.regaloId)).data.reservados
+                 == get(giftPath(request.resource.data.regaloId)).data.reservados - 1)
           ||
           // Liberación desde el panel admin
           (request.resource.data.porAdmin == true

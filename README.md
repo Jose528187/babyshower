@@ -1,67 +1,74 @@
 # Lista de Regalos · Baby Shower de Liam José
 
-Página estática (GitHub Pages) con reservas en tiempo real guardadas en **Firebase Firestore**.
+Página estática (GitHub Pages) con la lista de regalos y las reservas en tiempo real en **Firebase Firestore**.
+
+- Invitados: <https://jose528187.github.io/babyshower/>
+- Admin: <https://jose528187.github.io/babyshower/admin.html>
 
 | Archivo | Qué es |
 |---|---|
 | `index.html` | La lista pública para los invitados |
-| `app.js` | Lógica de reservas (tiempo real, filtros, formulario) |
-| `firebase-config.js` | Tus claves de Firebase + email del admin |
-| `admin.html` | Panel privado: quién reservó qué, IP, ubicación, CSV, liberar reservas |
-| `firestore.rules` | Reglas de seguridad (evitan reservas dobles y protegen los datos privados) |
+| `app.js` | Lógica pública: lista, filtros, reservar y cancelar con PIN |
+| `admin.html` | Panel privado: administrar regalos/categorías y ver reservas (IP, ubicación, CSV, liberar) |
+| `firebase.js` | Conexión a Firebase (y al emulador local para pruebas) |
+| `firebase-config.js` | Claves de Firebase + email del admin |
+| `firestore.rules` | Reglas de seguridad (hay que publicarlas en la consola cada vez que cambian) |
+| `seed.json` | Lista inicial de 92 regalos, para el botón "Importar lista inicial" del admin |
 
-Mientras `firebase-config.js` tenga los valores `TU_...`, la página funciona en **modo demo** (solo guarda en el navegador).
+## Administrar la lista (admin.html → pestaña Regalos)
 
-## 1. Crear el proyecto en Firebase (gratis)
+- **Agregar** un regalo con nombre, detalle (talles, marca…), categoría y **cantidad**.
+- **Cantidad:** si un regalo tiene cantidad 3, lo pueden reservar hasta 3 personas (una unidad cada una).
+  No se puede bajar la cantidad por debajo de lo ya reservado.
+- **Activo:** desmarcarlo oculta el regalo de la lista pública sin perder sus reservas.
+- **Eliminar:** solo si no tiene reservas activas (si tiene, deshabilitalo o liberá sus reservas).
+- **Orden:** número para ordenar dentro de la categoría. Las categorías también tienen ícono y orden.
+- Todo se guarda automáticamente al salir del campo, y la página pública se actualiza al instante.
 
-1. Entrá a <https://console.firebase.google.com> → **Agregar proyecto** (podés desactivar Analytics).
-2. **Compilación → Firestore Database → Crear base de datos** → modo **producción** → ubicación `southamerica-east1` (São Paulo).
-3. **Compilación → Authentication → Comenzar → Google** → habilitar (sirve para entrar a `admin.html`).
-4. **Authentication → Configuración → Dominios autorizados** → agregar `TU_USUARIO.github.io`.
-5. **Configuración del proyecto (⚙️) → Tus apps → Web (`</>`)** → registrar la app y copiar el objeto `firebaseConfig`.
+## Configuración de Firebase (ya hecha)
 
-## 2. Configurar los archivos
+1. Firestore Database creado en modo producción.
+2. **Authentication → Google** habilitado, y en **Configuración → Dominios autorizados** agregado `jose528187.github.io`.
+3. **Firestore → Reglas:** pegar todo `firestore.rules` → **Publicar**. ⚠️ Repetirlo cada vez que cambie el archivo.
+4. Si la lista está vacía: `admin.html` → **Importar lista inicial** (carga `seed.json` y migra reservas del formato anterior).
 
-- Pegá los valores en `firebase-config.js` y poné tu Gmail en `ADMIN_EMAILS`.
-- En `firestore.rules`, reemplazá `TU_CORREO@gmail.com` por el mismo email.
-- En la consola: **Firestore → Reglas** → pegá todo el contenido de `firestore.rules` → **Publicar**.
+Publicar cambios: `git push` a `main`; GitHub Pages se actualiza solo en 1–2 minutos.
 
-## 3. Publicar en GitHub Pages
+## Datos que se guardan
 
-```bash
-git init && git add . && git commit -m "Lista de regalos"
-git branch -M main
-git remote add origin https://github.com/TU_USUARIO/babyshower.git
-git push -u origin main
-```
-
-En GitHub: **Settings → Pages → Source: Deploy from a branch → `main` / root**. En un minuto queda en
-`https://TU_USUARIO.github.io/babyshower/` y el panel en `.../babyshower/admin.html`.
-
-## Qué se guarda en cada reserva
-
-- **Público** (`reservas/{regalo}`): fecha y un token aleatorio → todos ven que está reservado, no quién.
-- **Privado** (`reservas_privadas/{regalo}__{token}`, solo admin): nombre, contacto y mensaje opcionales,
-  el PIN **cifrado** (SHA-256), IP, ciudad/región/país y proveedor aproximados (vía ipwho.is, con respaldo en ipify),
-  navegador, sistema, pantalla, idioma, zona horaria, un ID anónimo del dispositivo y fecha del servidor.
-  Estos documentos no se borran al cancelar: quedan como historial.
-- **Cancelaciones** (`cancelaciones/{regalo}__{token}`, solo admin): cuándo, desde qué IP/dispositivo
-  y si fue el invitado o el admin.
+| Colección | Quién la lee | Contenido |
+|---|---|---|
+| `categorias/{id}` | todos | nombre, ícono, orden |
+| `regalos/{id}` | todos | nombre, detalle, categoría, cantidad, activo, orden, reservados |
+| `reservas/{regalo}__{token}` | todos | una por unidad reservada: fecha y token (no dice quién) |
+| `reservas_privadas/{regalo}__{token}` | solo admin | nombre, contacto, mensaje, PIN cifrado (SHA-256), IP, ciudad/país/proveedor aprox. (ipwho.is / ipify), navegador, sistema, pantalla, idioma, zona horaria, ID del dispositivo. Queda como historial. |
+| `cancelaciones/{regalo}__{token}` | solo admin | cuándo, desde qué IP/dispositivo y si canceló el invitado o el admin |
 
 ## Cancelar una reserva
 
 Al reservar, cada invitado elige un **PIN de 4 números**.
 
-- **Desde el mismo dispositivo:** el regalo muestra "Cancelar reserva" (el PIN ya está recordado).
-- **Desde otro dispositivo:** tocar el regalo reservado → ingresar el PIN.
-- **Ustedes:** `admin.html` → **Liberar** (por ejemplo si alguien olvidó su PIN).
+- **Mismo dispositivo:** aparece "Cancelar reserva" / "Cancelar mi reserva" (el PIN ya está recordado).
+- **Otro dispositivo:** "¿Ya lo reservaste? Cancelar con PIN" → ingresar el PIN.
+- **Ustedes:** `admin.html` → pestaña Reservas → **Liberar**.
 
-El PIN se verifica en las reglas de Firestore, no en el navegador, así que no se puede saltear.
+Las reglas de Firestore verifican el PIN y mantienen el contador de reservados consistente,
+así que nada de esto se puede saltear desde el navegador.
 
 Notas:
-- La IP la obtiene el navegador del invitado, así que alguien con conocimientos técnicos podría falsearla.
-  Además, todos los que estén en el mismo WiFi comparten IP, así que no sirve para identificar personas.
-  La protección real contra reservas dobles son las reglas de Firestore.
-- Un PIN de 4 números tiene 10.000 combinaciones: suficiente para un baby shower, pero alguien muy decidido
-  podría probarlas con un script. Si pasara, se ve en el historial del admin y se puede volver a reservar.
-- Para probar localmente: `python3 -m http.server 8765` y abrir <http://localhost:8765> (los módulos JS no funcionan con `file://`).
+- Todos los que estén en el mismo WiFi comparten IP: sirve como dato, no para identificar personas.
+- Un PIN de 4 números tiene 10.000 combinaciones: suficiente para un baby shower. Cualquier abuso queda en el historial.
+
+## Probar localmente sin tocar la base real
+
+```bash
+python3 -m http.server 8765
+```
+
+Abrir <http://localhost:8765>. Esto usa la base **real**. Para usar el emulador de Firebase:
+
+```bash
+npx firebase-tools@13 emulators:start --only firestore,auth --project demo-babyshower
+```
+
+(usa `firebase.json`; requiere Java) y abrir <http://localhost:8765/?emulator> o <http://localhost:8765/admin.html?emulator>.

@@ -15,3 +15,4 @@ export const firebaseConfig = {
 export const ADMIN_EMAILS = ["jamp528@gmail.com"];
 
 export const FIREBASE_VERSION = "10.12.2";
+

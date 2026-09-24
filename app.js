@@ -1,24 +1,20 @@
-import { firebaseConfig, FIREBASE_VERSION } from './firebase-config.js';
-
-const CONFIGURED = firebaseConfig.apiKey && !firebaseConfig.apiKey.startsWith('TU_');
-const MINE_KEY = 'liam-mis-reservas-v2';   // { [regaloId]: { token, pin } }
+const MINE_KEY = 'liam-mis-reservas-v3';   // { [reservaId]: { regaloId, token, pin } }
 const DEVICE_KEY = 'liam-device-id';
-const DEMO_KEY = 'liam-demo-reservas-v2';
 
 const $ = id => document.getElementById(id);
-const cards = [...document.querySelectorAll('.gift-card')];
-const sections = [...document.querySelectorAll('.category')];
 const search = $('search');
 let filter = 'all';
-let reservations = {};
-let current = null;
-let backend = null;
+let gifts = {};          // regalos/{id}
+let categories = {};     // categorias/{id}
+let reservations = {};   // reservas/{regaloId__token}
+let loaded = { gifts: false, categories: false, reservations: false };
+let current = null;      // regalo abierto en un modal
+let fb = null;
 
 // ---------- utilidades ----------
-const normalize = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
-const slug = s => normalize(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 100);
-const giftName = c => c.querySelector('.gift-name').textContent.trim();
+const normalize = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 const isPin = p => /^[0-9]{4}$/.test(p);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function store(key, fallback) {
     try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
@@ -40,9 +36,23 @@ async function pinHash(pin, token) {
     return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-const mine = () => store(MINE_KEY, {});
-// Es "mía" solo si el token local coincide con la reserva vigente (si alguien la canceló y re-reservó, ya no).
-const isMine = id => Boolean(reservations[id] && mine()[id]?.token === reservations[id].token);
+// Reservas vigentes hechas desde este dispositivo para un regalo.
+function myReservations(giftId) {
+    const mine = store(MINE_KEY, {});
+    return Object.entries(mine)
+        .filter(([rid, r]) => r.regaloId === giftId && reservations[rid])
+        .map(([rid, r]) => ({ rid, ...r }));
+}
+function activeReservations(giftId) {
+    return Object.entries(reservations)
+        .filter(([, r]) => r.regaloId === giftId)
+        .sort(([, a], [, b]) => (b.fecha?.toMillis?.() || 0) - (a.fecha?.toMillis?.() || 0))
+        .map(([rid, r]) => ({ rid, ...r }));
+}
+function giftStatus(g) {
+    const left = Math.max(0, g.cantidad - (g.reservados || 0));
+    return { left, mine: myReservations(g.id).length };
+}
 
 function toast(msg, ms = 5000) {
     const t = $('toast');
@@ -50,6 +60,11 @@ function toast(msg, ms = 5000) {
     t.classList.remove('hidden');
     clearTimeout(toast.timer);
     toast.timer = setTimeout(() => t.classList.add('hidden'), ms);
+}
+function showNotice(msg) {
+    const n = $('notice');
+    n.textContent = msg;
+    n.classList.remove('hidden');
 }
 
 async function fetchJson(url, ms = 3500) {
@@ -84,121 +99,128 @@ function deviceInfo() {
     };
 }
 
-// ---------- backends ----------
+// ---------- base de datos ----------
 // Colecciones:
-//   reservas/{regaloId}                  público: { fecha, token }
-//   reservas_privadas/{regaloId__token}  admin: nombre, pinHash, IP, dispositivo...
-//   cancelaciones/{regaloId__token}      admin: quién/cuándo canceló (el PIN se valida en las reglas)
-async function firebaseBackend() {
-    const base = `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}`;
-    const { initializeApp } = await import(`${base}/firebase-app.js`);
-    const { getFirestore, collection, onSnapshot, doc, writeBatch, serverTimestamp } = await import(`${base}/firebase-firestore.js`);
-    const db = getFirestore(initializeApp(firebaseConfig));
-    return {
-        subscribe(cb) {
-            onSnapshot(collection(db, 'reservas'), snap => {
-                const map = {};
-                snap.forEach(d => { map[d.id] = d.data(); });
-                cb(map);
-            }, err => {
-                console.error(err);
-                showNotice('No se pudo conectar con la lista. Revisá tu conexión y recargá la página.');
-            });
-        },
-        async reserve(id, token, privateData) {
-            const batch = writeBatch(db);
-            batch.set(doc(db, 'reservas', id), { fecha: serverTimestamp(), token });
-            batch.set(doc(db, 'reservas_privadas', `${id}__${token}`), { ...privateData, regaloId: id, token, fecha: serverTimestamp() });
-            await batch.commit();
-        },
-        async cancel(id, token, pin, info) {
-            const batch = writeBatch(db);
-            batch.delete(doc(db, 'reservas', id));
-            batch.set(doc(db, 'cancelaciones', `${id}__${token}`), { ...info, regaloId: id, token, pin, porAdmin: false, fecha: serverTimestamp() });
-            await batch.commit();
-        }
+//   categorias/{id}                    público: { nombre, icono, orden }
+//   regalos/{id}                       público: { nombre, detalle, categoria, cantidad, activo, orden, reservados, ultimoToken }
+//   reservas/{regaloId__token}         público: { regaloId, token, fecha }  (una por unidad reservada)
+//   reservas_privadas/{regaloId__token} admin: nombre, pinHash, IP, dispositivo...
+//   cancelaciones/{regaloId__token}    admin: quién/cuándo canceló (el PIN se valida en las reglas)
+function subscribe() {
+    const { collection, onSnapshot } = fb.fs;
+    const onErr = err => {
+        console.error(err);
+        showNotice('No se pudo conectar con la lista. Revisá tu conexión y recargá la página.');
     };
+    const listen = (name, key, assign) => onSnapshot(collection(fb.db, name), snap => {
+        const map = {};
+        snap.forEach(d => { map[d.id] = { id: d.id, ...d.data() }; });
+        assign(map);
+        loaded[key] = true;
+        render();
+    }, onErr);
+    listen('regalos', 'gifts', m => { gifts = m; });
+    listen('categorias', 'categories', m => { categories = m; });
+    // Se ignoran documentos con el formato anterior (sin "__").
+    listen('reservas', 'reservations', m => { reservations = Object.fromEntries(Object.entries(m).filter(([id]) => id.includes('__'))); });
 }
 
-// Modo demo: imita las mismas reglas usando localStorage.
-function demoBackend() {
-    let listener = () => { };
-    const read = () => store(DEMO_KEY, { reservas: {}, privadas: {}, cancelaciones: {} });
-    const denied = () => Object.assign(new Error('denied'), { code: 'permission-denied' });
-    window.addEventListener('storage', e => { if (e.key === DEMO_KEY) listener(read().reservas); });
-    return {
-        subscribe(cb) { listener = cb; cb(read().reservas); },
-        async reserve(id, token, privateData) {
-            const db = read();
-            if (db.reservas[id]) throw denied();
-            db.reservas[id] = { fecha: new Date().toISOString(), token };
-            db.privadas[`${id}__${token}`] = { ...privateData, regaloId: id, token };
-            save(DEMO_KEY, db);
-            listener(db.reservas);
-        },
-        async cancel(id, token, pin, info) {
-            const db = read();
-            const priv = db.privadas[`${id}__${token}`];
-            if (db.reservas[id]?.token !== token || !priv || priv.pinHash !== await pinHash(pin, token)) throw denied();
-            delete db.reservas[id];
-            db.cancelaciones[`${id}__${token}`] = { ...info, regaloId: id, token, fecha: new Date().toISOString() };
-            save(DEMO_KEY, db);
-            listener(db.reservas);
+async function reserveGift(giftId, token, privateData) {
+    const { doc, runTransaction, serverTimestamp } = fb.fs;
+    const rid = `${giftId}__${token}`;
+    await runTransaction(fb.db, async tx => {
+        const ref = doc(fb.db, 'regalos', giftId);
+        const snap = await tx.get(ref);
+        const g = snap.data();
+        if (!snap.exists() || !g.activo || (g.reservados || 0) >= g.cantidad) {
+            throw Object.assign(new Error('agotado'), { code: 'agotado' });
         }
-    };
+        tx.update(ref, { reservados: (g.reservados || 0) + 1, ultimoToken: token });
+        tx.set(doc(fb.db, 'reservas', rid), { regaloId: giftId, token, fecha: serverTimestamp() });
+        tx.set(doc(fb.db, 'reservas_privadas', rid), { ...privateData, regaloId: giftId, token, fecha: serverTimestamp() });
+    });
+    return rid;
+}
+
+async function cancelReservation(giftId, token, pin, info) {
+    const { doc, runTransaction, serverTimestamp } = fb.fs;
+    const rid = `${giftId}__${token}`;
+    await runTransaction(fb.db, async tx => {
+        const ref = doc(fb.db, 'regalos', giftId);
+        const g = (await tx.get(ref)).data();
+        tx.update(ref, { reservados: g.reservados - 1, ultimoToken: token });
+        tx.delete(doc(fb.db, 'reservas', rid));
+        tx.set(doc(fb.db, 'cancelaciones', rid), { ...info, regaloId: giftId, token, pin, porAdmin: false, fecha: serverTimestamp() });
+    });
 }
 
 // ---------- interfaz ----------
-function showNotice(msg) {
-    const n = $('notice');
-    n.textContent = msg;
-    n.classList.remove('hidden');
+function sortedCategories() {
+    const list = Object.values(categories).sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0) || a.nombre.localeCompare(b.nombre));
+    const known = new Set(list.map(c => c.id));
+    if (Object.values(gifts).some(g => !known.has(g.categoria))) list.push({ id: '__otros', nombre: 'Otros', icono: '🎁' });
+    return list;
+}
+
+function cardHtml(g) {
+    const { left, mine } = giftStatus(g);
+    const full = left === 0;
+    const multi = g.cantidad > 1;
+    const taken = (g.reservados || 0) > 0;
+    const btn = !full
+        ? { text: mine ? 'Reservar otro' : 'Reservar', cls: '', action: 'reserve' }
+        : mine ? { text: 'Cancelar reserva', cls: 'cancel', action: 'cancel' } : { text: '🔒 Reservado', cls: '', action: 'cancel' };
+    const state = mine
+        ? ['💙 Reservaste' + (mine > 1 ? ` ${mine}` : ''), !full && `quedan ${left}`].filter(Boolean).join(' · ')
+        : full ? 'Reservado' : multi ? `Quedan ${left} de ${g.cantidad}` : 'Disponible';
+    // Enlace secundario para cancelar cuando el botón principal no lo hace.
+    const link = btn.action === 'cancel' || !taken ? ''
+        : `<button class="cancel-link" type="button" data-action="cancel">${mine ? 'Cancelar mi reserva' : '¿Ya lo reservaste? Cancelar con PIN'}</button>`;
+    return `
+        <article class="gift-card ${full && !mine ? 'reserved' : ''} ${mine ? 'mine' : ''}" data-id="${esc(g.id)}">
+            <div class="check-wrap"><input type="checkbox" aria-hidden="true" tabindex="-1" disabled ${full ? 'checked' : ''}></div>
+            <div class="gift-main">
+                <div class="gift-name">${esc(g.nombre)}</div>
+                ${g.detalle ? `<div class="ref">📏 ${esc(g.detalle)}</div>` : ''}
+                ${multi ? `<div class="ref">🎁 Cantidad deseada: ${g.cantidad}</div>` : ''}
+                ${link}
+            </div>
+            <button class="reserve ${btn.cls}" type="button" data-action="${btn.action}">${btn.text}</button>
+            <span class="state">${state}</span>
+        </article>`;
 }
 
 function render() {
-    let reserved = 0;
-    cards.forEach(c => {
-        const id = c.dataset.id;
-        const taken = Boolean(reservations[id]);
-        const own = isMine(id);
-        if (taken) reserved++;
-        c.classList.toggle('reserved', taken && !own);
-        c.classList.toggle('mine', own);
-        const btn = c.querySelector('.reserve');
-        btn.textContent = own ? 'Cancelar reserva' : taken ? '🔒 Reservado' : 'Reservar';
-        btn.setAttribute('aria-label', own ? 'Cancelar mi reserva' : taken ? 'Reservado. ¿Es tuyo? Cancelar con PIN' : 'Reservar este regalo');
-        btn.title = taken && !own ? '¿Lo reservaste vos? Tocá para cancelar con tu PIN' : '';
-        c.querySelector('input[type=checkbox]').checked = taken;
-        c.querySelector('.state').textContent = own ? '💙 Reservado por vos' : taken ? 'Reservado' : 'Disponible';
-    });
-    $('total').textContent = cards.length;
-    $('available').textContent = cards.length - reserved;
-    $('reserved').textContent = reserved;
-    applyFilter();
-}
-
-function applyFilter() {
+    if (!loaded.gifts || !loaded.categories || !loaded.reservations) return;
+    const active = Object.values(gifts).filter(g => g.activo);
     const q = normalize(search.value);
-    let visible = 0;
-    cards.forEach(c => {
-        const id = c.dataset.id;
-        const ok = filter === 'all'
-            || (filter === 'available' && !reservations[id])
-            || (filter === 'mine' && isMine(id));
-        const show = ok && c.dataset.search.includes(q);
-        c.classList.toggle('hidden', !show);
-        if (show) visible++;
-    });
-    sections.forEach(s => s.classList.toggle('hidden', !s.querySelector('.gift-card:not(.hidden)')));
-    let empty = $('empty');
-    if (!empty) {
-        empty = Object.assign(document.createElement('p'), { id: 'empty', className: 'empty' });
-        $('list').append(empty);
-    }
-    empty.textContent = filter === 'mine'
-        ? 'No tenés reservas en este dispositivo. Si reservaste desde otro, tocá el regalo y cancelalo con tu PIN.'
-        : 'No encontramos regalos con ese criterio.';
-    empty.classList.toggle('hidden', visible > 0);
+    const known = new Set(Object.keys(categories));
+    let units = 0, free = 0, visible = 0;
+    const html = sortedCategories().map(c => {
+        const items = active
+            .filter(g => (known.has(g.categoria) ? g.categoria : '__otros') === c.id)
+            .sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0) || a.nombre.localeCompare(b.nombre));
+        items.forEach(g => { units += g.cantidad; free += giftStatus(g).left; });
+        const shown = items.filter(g => {
+            const { left, mine } = giftStatus(g);
+            const ok = filter === 'all' || (filter === 'available' && left > 0) || (filter === 'mine' && mine > 0);
+            return ok && normalize(`${g.nombre} ${g.detalle || ''} ${c.nombre}`).includes(q);
+        });
+        visible += shown.length;
+        if (!shown.length) return '';
+        return `
+            <section class="category">
+                <h2><span class="cat-icon">${esc(c.icono || '🎁')}</span>${esc(c.nombre)}</h2>
+                <div class="grid">${shown.map(cardHtml).join('')}</div>
+            </section>`;
+    }).join('');
+    const empty = !active.length ? 'La lista de regalos todavía no está cargada.'
+        : filter === 'mine' ? 'No tenés reservas en este dispositivo. Si reservaste desde otro, buscá el regalo y cancelalo con tu PIN.'
+            : 'No encontramos regalos con ese criterio.';
+    $('list').innerHTML = html + (visible ? '' : `<p class="empty">${empty}</p>`);
+    $('total').textContent = units;
+    $('available').textContent = free;
+    $('reserved').textContent = units - free;
 }
 
 function openModal(modalId, focusId) {
@@ -211,25 +233,29 @@ function closeModals() {
     current = null;
 }
 
-function openReserve(card) {
-    current = card;
-    $('modal-gift').textContent = giftName(card);
+function giftTitle(g) {
+    return g.detalle ? `${g.nombre} (${g.detalle})` : g.nombre;
+}
+
+function openReserve(g) {
+    current = g.id;
+    $('modal-gift').textContent = giftTitle(g);
     $('form-error').textContent = '';
     $('f-name').value = store('liam-nombre', '') || '';
     $('f-pin').value = '';
     openModal('modal', $('f-name').value ? 'f-pin' : 'f-name');
 }
 
-function openCancel(card) {
-    current = card;
-    const own = isMine(card.dataset.id);
-    $('cancel-gift').textContent = giftName(card);
+function openCancel(g) {
+    current = g.id;
+    const own = myReservations(g.id).length > 0;
+    $('cancel-gift').textContent = giftTitle(g);
     $('cancel-error').textContent = '';
     $('c-pin').value = '';
     $('cancel-pin-field').classList.toggle('hidden', own);
     $('cancel-text').textContent = own
         ? '¿Seguro que querés cancelar tu reserva? El regalo volverá a estar disponible para todos.'
-        : 'Este regalo ya está reservado. Si lo reservaste vos (quizás desde otro dispositivo), ingresá el PIN que elegiste para cancelarlo.';
+        : 'Si reservaste este regalo (quizás desde otro dispositivo), ingresá el PIN que elegiste para cancelarlo.';
     openModal('cancel-modal', own ? 'cancel-submit' : 'c-pin');
 }
 
@@ -245,16 +271,15 @@ async function submitReserve(e) {
     const pin = $('f-pin').value.trim();
     if (nombre.length < 2) { $('form-error').textContent = 'Por favor escribí tu nombre.'; return $('f-name').focus(); }
     if (!isPin(pin)) { $('form-error').textContent = 'El PIN debe tener exactamente 4 números.'; return $('f-pin').focus(); }
-    const card = current;
-    const id = card.dataset.id;
+    const g = gifts[current];
     const token = randomHex(12);
     const btn = $('modal-submit');
     busy(btn, true, 'Reservando…');
     try {
         const net = await networkInfo();
-        await backend.reserve(id, token, {
-            regalo: giftName(card),
-            categoria: card.dataset.category,
+        const rid = await reserveGift(g.id, token, {
+            regalo: g.nombre,
+            categoria: categories[g.categoria]?.nombre || g.categoria,
             nombre,
             contacto: $('f-contact').value.trim().slice(0, 80) || null,
             mensaje: $('f-message').value.trim().slice(0, 300) || null,
@@ -262,16 +287,16 @@ async function submitReserve(e) {
             ...net,
             ...deviceInfo()
         });
-        save(MINE_KEY, { ...mine(), [id]: { token, pin } });
+        save(MINE_KEY, { ...store(MINE_KEY, {}), [rid]: { regaloId: g.id, token, pin } });
         save('liam-nombre', nombre);
         $('reserve-form').reset();
         closeModals();
         render();
-        toast(`¡Gracias, ${nombre.split(' ')[0]}! Reservaste "${giftName(card)}" 💙 Recordá tu PIN ${pin} por si querés cancelar.`, 8000);
+        toast(`¡Gracias, ${nombre.split(' ')[0]}! Reservaste "${g.nombre}" 💙 Recordá tu PIN ${pin} por si querés cancelar.`, 8000);
     } catch (err) {
         console.error(err);
-        $('form-error').textContent = err.code === 'permission-denied'
-            ? 'Ups, alguien acaba de reservar este regalo. Elegí otro 🤎'
+        $('form-error').textContent = ['agotado', 'permission-denied'].includes(err.code)
+            ? 'Ups, alguien acaba de reservar la última unidad de este regalo. Elegí otro 🤎'
             : 'No se pudo guardar la reserva. Revisá tu conexión e intentá de nuevo.';
     } finally {
         busy(btn, false);
@@ -280,31 +305,32 @@ async function submitReserve(e) {
 
 async function submitCancel(e) {
     e.preventDefault();
-    const card = current;
-    const id = card.dataset.id;
-    const own = isMine(id);
-    const pin = own ? mine()[id].pin : $('c-pin').value.trim();
+    const g = gifts[current];
+    const own = myReservations(g.id);
+    const pin = own.length ? own[0].pin : $('c-pin').value.trim();
     if (!isPin(pin)) { $('cancel-error').textContent = 'Ingresá tu PIN de 4 números.'; return $('c-pin').focus(); }
-    const token = reservations[id]?.token;
-    if (!token) { closeModals(); return render(); }
+    // Con el mismo dispositivo sabemos cuál es; con PIN se prueba contra cada reserva activa del regalo.
+    const candidates = own.length ? [own[0]] : activeReservations(g.id);
+    if (!candidates.length) { closeModals(); return render(); }
     const btn = $('cancel-submit');
     busy(btn, true, 'Cancelando…');
     try {
-        await backend.cancel(id, token, pin, {
-            regalo: giftName(card),
-            desdeMismoDispositivo: own,
-            ...(await networkInfo()),
-            ...deviceInfo()
-        });
-        const m = mine();
-        delete m[id];
-        save(MINE_KEY, m);
+        const info = { regalo: g.nombre, desdeMismoDispositivo: own.length > 0, ...(await networkInfo()), ...deviceInfo() };
+        let done = null, lastErr = null;
+        for (const r of candidates) {
+            try { await cancelReservation(g.id, r.token, pin, info); done = r; break; }
+            catch (err) { lastErr = err; if (err.code !== 'permission-denied') break; }
+        }
+        if (!done) throw lastErr;
+        const mine = store(MINE_KEY, {});
+        delete mine[done.rid];
+        save(MINE_KEY, mine);
         closeModals();
         render();
-        toast(`Listo, cancelaste la reserva de "${giftName(card)}". Ya está disponible otra vez.`);
+        toast(`Listo, cancelaste tu reserva de "${g.nombre}". Ya está disponible otra vez.`);
     } catch (err) {
         console.error(err);
-        $('cancel-error').textContent = err.code === 'permission-denied'
+        $('cancel-error').textContent = err?.code === 'permission-denied'
             ? 'El PIN no es correcto. Si no lo recordás, escribiles a los papás 🤎'
             : 'No se pudo cancelar. Revisá tu conexión e intentá de nuevo.';
         $('c-pin').select();
@@ -314,38 +340,34 @@ async function submitCancel(e) {
 }
 
 async function init() {
-    cards.forEach(c => {
-        c.dataset.id = slug(c.dataset.name);
-        c.dataset.search = normalize(c.dataset.name + ' ' + c.dataset.category);
-    });
-    render();
-
-    try {
-        backend = CONFIGURED ? await firebaseBackend() : demoBackend();
-    } catch (err) {
-        console.error(err);
-        showNotice('No se pudo cargar la base de datos. Recargá la página en unos segundos.');
-        return;
-    }
-    if (!CONFIGURED) showNotice('Modo demo: Firebase aún no está configurado, las reservas solo se guardan en este navegador.');
-
-    backend.subscribe(map => { reservations = map; render(); });
-
-    cards.forEach(c => c.querySelector('.reserve').addEventListener('click', () => {
-        reservations[c.dataset.id] ? openCancel(c) : openReserve(c);
-    }));
     document.querySelectorAll('[data-filter]').forEach(b => b.addEventListener('click', () => {
         filter = b.dataset.filter;
         document.querySelectorAll('[data-filter]').forEach(x => x.classList.toggle('active', x === b));
-        applyFilter();
+        render();
     }));
+    search.addEventListener('input', render);
+    $('list').addEventListener('click', e => {
+        const el = e.target.closest('[data-action]');
+        const g = el && gifts[el.closest('.gift-card')?.dataset.id];
+        if (!g) return;
+        el.dataset.action === 'reserve' ? openReserve(g) : openCancel(g);
+    });
     document.querySelectorAll('.pin-input').forEach(i => i.addEventListener('input', () => { i.value = i.value.replace(/\D/g, '').slice(0, 4); }));
-    search.addEventListener('input', applyFilter);
     $('reserve-form').addEventListener('submit', submitReserve);
     $('cancel-form').addEventListener('submit', submitCancel);
     document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModals));
     document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) closeModals(); }));
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && current) closeModals(); });
+
+    try {
+        fb = await import('./firebase.js');
+    } catch (err) {
+        console.error(err);
+        showNotice('No se pudo cargar la base de datos. Recargá la página en unos segundos.');
+        return;
+    }
+    if (fb.isEmulator) showNotice('Modo prueba: conectado al emulador local de Firebase.');
+    subscribe();
 }
 
 init();

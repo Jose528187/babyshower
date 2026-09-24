@@ -39,6 +39,14 @@
             margin: 0 0 4px
         }
 
+        h2 {
+            font-family: Georgia, serif;
+            color: var(--brown);
+            font-weight: normal;
+            font-size: 20px;
+            margin: 26px 0 10px
+        }
+
         .bar {
             display: flex;
             gap: 9px;
@@ -57,8 +65,17 @@
             cursor: pointer
         }
 
+        .btn:disabled {
+            opacity: .45;
+            cursor: not-allowed
+        }
+
         .btn.brown {
             background: var(--brown)
+        }
+
+        .btn.grey {
+            background: #aaa
         }
 
         .btn.small {
@@ -67,18 +84,61 @@
             background: #c9745f
         }
 
+        input,
+        select {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font: inherit;
+            font-size: 13px;
+            color: var(--ink);
+            background: #fff
+        }
+
         input[type=search] {
             flex: 1;
             min-width: 200px;
-            border: 1px solid var(--line);
-            border-radius: 12px;
             padding: 10px 13px;
             font-size: 14px
+        }
+
+        input[type=number] {
+            width: 64px
+        }
+
+        input[type=checkbox] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--blue)
         }
 
         .muted {
             color: #8a7d74;
             font-size: 13px
+        }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-top: 18px;
+            border-bottom: 2px solid var(--line)
+        }
+
+        .tab {
+            border: 0;
+            background: none;
+            padding: 10px 16px;
+            font: inherit;
+            font-weight: bold;
+            color: #8a7d74;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px
+        }
+
+        .tab.active {
+            color: var(--brown);
+            border-color: var(--brown)
         }
 
         .wrap {
@@ -97,8 +157,12 @@
         th,
         td {
             text-align: left;
-            padding: 9px 10px;
+            padding: 8px 10px;
             border-bottom: 1px solid var(--line);
+            vertical-align: middle
+        }
+
+        #rows td {
             vertical-align: top
         }
 
@@ -115,12 +179,28 @@
             overflow-wrap: anywhere
         }
 
-        .hidden {
-            display: none !important
+        tr.cat-row td {
+            background: #fdf8f3;
+            font-weight: bold;
+            color: var(--brown)
+        }
+
+        tr.off td {
+            opacity: .5
         }
 
         tr.cancelled td {
             opacity: .55
+        }
+
+        td.name input {
+            width: 100%;
+            min-width: 200px
+        }
+
+        td.detail input {
+            width: 100%;
+            min-width: 140px
         }
 
         .badge {
@@ -141,12 +221,59 @@
             background: #f0e2d8;
             color: #815a43
         }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 14px
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center
+        }
+
+        .form-row input[name=nombre] {
+            flex: 2;
+            min-width: 200px
+        }
+
+        .form-row input[name=detalle] {
+            flex: 1;
+            min-width: 140px
+        }
+
+        .saved {
+            color: #46744e;
+            font-size: 12px;
+            white-space: nowrap
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
+            background: var(--ink);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            z-index: 10
+        }
+
+        .hidden {
+            display: none !important
+        }
     </style>
 </head>
 
 <body>
     <div class="page">
-        <h1>Reservas del Baby Shower</h1>
+        <h1>Baby Shower · Admin</h1>
         <div class="muted" id="status">Cargando…</div>
 
         <div class="bar" id="login-bar">
@@ -154,62 +281,138 @@
         </div>
 
         <div id="panel" class="hidden">
-            <div class="bar">
-                <input type="search" id="q" placeholder="Buscar por nombre, regalo, IP…">
-                <label class="muted"><input type="checkbox" id="show-cancelled"> Mostrar canceladas</label>
-                <button class="btn brown" id="csv">Descargar CSV</button>
-                <button class="btn" id="logout" style="background:#aaa">Salir</button>
+            <div class="tabs">
+                <button class="tab active" data-tab="gifts">🎁 Regalos</button>
+                <button class="tab" data-tab="reservations">📋 Reservas</button>
+                <span style="flex:1"></span>
+                <button class="btn grey" id="logout" style="margin-bottom:6px">Salir</button>
             </div>
-            <div class="wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Regalo</th>
-                            <th>Nombre</th>
-                            <th>Contacto / Mensaje</th>
-                            <th>IP / Ubicación</th>
-                            <th>Dispositivo</th>
-                            <th>Estado</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="rows"></tbody>
-                </table>
-            </div>
+
+            <!-- ============ REGALOS ============ -->
+            <section id="tab-gifts">
+                <div id="import-box" class="card hidden" style="margin-top:16px">
+                    <b>La lista de regalos está vacía.</b>
+                    <p class="muted">Podés importar la lista original (92 regalos en 6 categorías). Las reservas que ya existan se conservan.</p>
+                    <button class="btn brown" id="import">Importar lista inicial</button>
+                </div>
+
+                <h2>Agregar regalo</h2>
+                <form id="add-gift" class="card form-row">
+                    <input name="nombre" placeholder="Nombre del regalo *" required maxlength="150">
+                    <input name="detalle" placeholder="Detalle (talles, marca…)" maxlength="150">
+                    <select name="categoria" required></select>
+                    <label class="muted">Cantidad <input name="cantidad" type="number" min="1" max="99" value="1" required></label>
+                    <button class="btn">Agregar</button>
+                </form>
+
+                <div class="bar">
+                    <input type="search" id="gift-q" placeholder="Buscar regalo…">
+                    <label class="muted"><input type="checkbox" id="show-off" checked> Mostrar deshabilitados</label>
+                </div>
+                <p class="muted">Los cambios se guardan solos. <b>Deshabilitar</b> oculta el regalo de la lista pública sin perder sus reservas.
+                    Solo se puede <b>eliminar</b> un regalo sin reservas activas.</p>
+                <div class="wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Activo</th>
+                                <th>Nombre</th>
+                                <th>Detalle</th>
+                                <th>Categoría</th>
+                                <th>Cantidad</th>
+                                <th>Reservados</th>
+                                <th>Orden</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="gift-rows"></tbody>
+                    </table>
+                </div>
+
+                <h2>Categorías</h2>
+                <div class="wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ícono</th>
+                                <th>Nombre</th>
+                                <th>Orden</th>
+                                <th>Regalos</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cat-rows"></tbody>
+                    </table>
+                </div>
+                <form id="add-cat" class="card form-row" style="margin-top:10px">
+                    <input name="icono" placeholder="🎁" maxlength="4" style="width:60px">
+                    <input name="nombre" placeholder="Nueva categoría *" required maxlength="60" style="flex:1;min-width:200px">
+                    <button class="btn">Agregar categoría</button>
+                </form>
+            </section>
+
+            <!-- ============ RESERVAS ============ -->
+            <section id="tab-reservations" class="hidden">
+                <div class="bar">
+                    <input type="search" id="q" placeholder="Buscar por nombre, regalo, IP…">
+                    <label class="muted"><input type="checkbox" id="show-cancelled"> Mostrar canceladas</label>
+                    <button class="btn brown" id="csv">Descargar CSV</button>
+                </div>
+                <div class="wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Regalo</th>
+                                <th>Nombre</th>
+                                <th>Contacto / Mensaje</th>
+                                <th>IP / Ubicación</th>
+                                <th>Dispositivo</th>
+                                <th>Estado</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="rows"></tbody>
+                    </table>
+                </div>
+            </section>
         </div>
     </div>
+    <div id="toast" class="toast hidden"></div>
 
     <script type="module">
-        import { firebaseConfig, ADMIN_EMAILS, FIREBASE_VERSION } from './firebase-config.js';
+        import { ADMIN_EMAILS } from './firebase-config.js';
+        import { db, fs, loadAuth, isEmulator } from './firebase.js';
+
+        const { collection, onSnapshot, doc, writeBatch, serverTimestamp, runTransaction, updateDoc, setDoc, deleteDoc, getDocs } = fs;
+        const { auth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } = await loadAuth();
 
         const $ = id => document.getElementById(id);
-        const status = msg => $('status').textContent = msg;
+        const status = msg => $('status').textContent = (isEmulator ? '[EMULADOR] ' : '') + msg;
         const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-
-        if (firebaseConfig.apiKey.startsWith('TU_')) {
-            status('Firebase no está configurado todavía. Completá firebase-config.js (ver README.md).');
-            $('login-bar').classList.add('hidden');
-            throw new Error('not configured');
+        const normalize = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+        const slug = s => normalize(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80);
+        const randomId = () => Math.random().toString(36).slice(2, 6);
+        const fmt = ts => ts?.toDate ? ts.toDate().toLocaleString('es-AR') : '';
+        const ms = ts => ts?.toMillis ? ts.toMillis() : Date.now();
+        function toast(msg) {
+            const t = $('toast');
+            t.textContent = msg;
+            t.classList.remove('hidden');
+            clearTimeout(toast.timer);
+            toast.timer = setTimeout(() => t.classList.add('hidden'), 3000);
         }
 
-        const base = `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}`;
-        const { initializeApp } = await import(`${base}/firebase-app.js`);
-        const { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } = await import(`${base}/firebase-auth.js`);
-        const { getFirestore, collection, onSnapshot, doc, writeBatch, serverTimestamp } = await import(`${base}/firebase-firestore.js`);
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        let reservas = [];
-        let cancelaciones = {};
+        let gifts = {}, categories = {}, reservas = [], cancelaciones = {}, publicRes = {};
         let unsubs = [];
 
         $('login').onclick = () => signInWithPopup(auth, new GoogleAuthProvider()).catch(e => status('Error al entrar: ' + e.message));
         $('logout').onclick = () => signOut(auth);
-        $('q').oninput = render;
-        $('show-cancelled').onchange = render;
-        $('csv').onclick = downloadCsv;
+        document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === t));
+            $('tab-gifts').classList.toggle('hidden', t.dataset.tab !== 'gifts');
+            $('tab-reservations').classList.toggle('hidden', t.dataset.tab !== 'reservations');
+        });
 
         onAuthStateChanged(auth, user => {
             unsubs.forEach(u => u());
@@ -219,32 +422,207 @@
             $('panel').classList.toggle('hidden', !ok);
             if (!user) return status('Entrá con la cuenta de Google autorizada.');
             if (!ok) return status(`La cuenta ${user.email} no tiene acceso.`);
-            const onErr = e => status('Sin permiso para leer (revisá el email en firestore.rules): ' + e.message);
-            unsubs.push(onSnapshot(collection(db, 'reservas_privadas'), snap => {
-                reservas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                render();
-            }, onErr));
-            unsubs.push(onSnapshot(collection(db, 'cancelaciones'), snap => {
-                cancelaciones = Object.fromEntries(snap.docs.map(d => [d.id, d.data()]));
-                render();
-            }, onErr));
+            const onErr = e => status('Sin permiso para leer (revisá el email en firestore.rules y publicá las reglas): ' + e.message);
+            const listen = (name, fn) => unsubs.push(onSnapshot(collection(db, name), snap => { fn(snap); renderAll(); }, onErr));
+            listen('regalos', s => { gifts = Object.fromEntries(s.docs.map(d => [d.id, { id: d.id, ...d.data() }])); });
+            listen('categorias', s => { categories = Object.fromEntries(s.docs.map(d => [d.id, { id: d.id, ...d.data() }])); });
+            listen('reservas', s => { publicRes = Object.fromEntries(s.docs.map(d => [d.id, d.data()])); });
+            listen('reservas_privadas', s => { reservas = s.docs.map(d => ({ id: d.id, ...d.data() })); });
+            listen('cancelaciones', s => { cancelaciones = Object.fromEntries(s.docs.map(d => [d.id, d.data()])); });
         });
 
-        const fmt = ts => ts?.toDate ? ts.toDate().toLocaleString('es-AR') : '';
-        const ms = ts => ts?.toMillis ? ts.toMillis() : Date.now();
+        function renderAll() {
+            renderGifts();
+            renderCategories();
+            renderReservations();
+        }
+
+        // ================= REGALOS =================
+        const sortedCats = () => Object.values(categories).sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0) || a.nombre.localeCompare(b.nombre));
+        const catOptions = selected => sortedCats().map(c => `<option value="${esc(c.id)}" ${c.id === selected ? 'selected' : ''}>${esc(c.icono || '')} ${esc(c.nombre)}</option>`).join('');
+
+        function renderGifts() {
+            const all = Object.values(gifts);
+            $('import-box').classList.toggle('hidden', all.length > 0);
+            const addSel = $('add-gift').categoria;
+            const prev = addSel.value;
+            addSel.innerHTML = catOptions(prev);
+            // No re-renderizar la tabla mientras se está editando un campo (perdería el foco).
+            if (document.activeElement?.closest('#gift-rows')) return;
+            const q = normalize($('gift-q').value);
+            const showOff = $('show-off').checked;
+            const groups = [...sortedCats(), { id: null, nombre: 'Sin categoría' }];
+            $('gift-rows').innerHTML = groups.map(c => {
+                const items = all
+                    .filter(g => c.id ? g.categoria === c.id : !categories[g.categoria])
+                    .filter(g => showOff || g.activo)
+                    .filter(g => normalize(`${g.nombre} ${g.detalle || ''}`).includes(q))
+                    .sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0) || a.nombre.localeCompare(b.nombre));
+                if (!items.length) return '';
+                return `<tr class="cat-row"><td colspan="8">${esc(c.icono || '')} ${esc(c.nombre)} · ${items.length}</td></tr>` + items.map(g => `
+                    <tr class="${g.activo ? '' : 'off'}" data-id="${esc(g.id)}">
+                        <td><input type="checkbox" data-f="activo" ${g.activo ? 'checked' : ''} title="Visible en la lista pública"></td>
+                        <td class="name"><input data-f="nombre" value="${esc(g.nombre)}" maxlength="150"></td>
+                        <td class="detail"><input data-f="detalle" value="${esc(g.detalle || '')}" maxlength="150"></td>
+                        <td><select data-f="categoria">${catOptions(g.categoria)}</select></td>
+                        <td><input type="number" data-f="cantidad" min="${Math.max(1, g.reservados || 0)}" max="99" value="${g.cantidad}"></td>
+                        <td>${g.reservados || 0} / ${g.cantidad}</td>
+                        <td><input type="number" data-f="orden" value="${g.orden ?? 0}"></td>
+                        <td><button class="btn small" data-del ${(g.reservados || 0) > 0 ? 'disabled title="Tiene reservas activas: deshabilitalo o liberá sus reservas"' : ''}>Eliminar</button></td>
+                    </tr>`).join('');
+            }).join('') || '<tr><td colspan="8" class="muted">No hay regalos.</td></tr>';
+        }
+
+        $('gift-q').oninput = renderGifts;
+        $('show-off').onchange = renderGifts;
+
+        $('gift-rows').addEventListener('change', async e => {
+            const input = e.target.closest('[data-f]');
+            const id = e.target.closest('tr')?.dataset.id;
+            if (!input || !id) return;
+            const f = input.dataset.f;
+            let value = input.type === 'checkbox' ? input.checked : input.value.trim();
+            const g = gifts[id];
+            if (f === 'nombre' && !value) { input.value = g.nombre; return toast('El nombre no puede quedar vacío'); }
+            if (f === 'detalle') value = value || null;
+            if (f === 'orden') value = Number(value) || 0;
+            if (f === 'cantidad') {
+                value = parseInt(value, 10);
+                if (!(value >= 1 && value <= 99)) { input.value = g.cantidad; return toast('La cantidad debe ser entre 1 y 99'); }
+                if (value < (g.reservados || 0)) { input.value = g.cantidad; return toast(`Ya hay ${g.reservados} reservados: la cantidad no puede ser menor`); }
+            }
+            try {
+                await updateDoc(doc(db, 'regalos', id), { [f]: value });
+                toast('✓ Guardado');
+            } catch (err) {
+                toast('No se pudo guardar: ' + err.message);
+            }
+            input.blur();
+            renderGifts();
+        });
+
+        $('gift-rows').addEventListener('click', async e => {
+            const btn = e.target.closest('[data-del]');
+            if (!btn) return;
+            const g = gifts[btn.closest('tr').dataset.id];
+            if (!confirm(`¿Eliminar "${g.nombre}" de la lista? (Si solo querés ocultarlo, desmarcá "Activo")`)) return;
+            await deleteDoc(doc(db, 'regalos', g.id)).then(() => toast('Regalo eliminado')).catch(err => toast('No se pudo eliminar: ' + err.message));
+        });
+
+        $('add-gift').addEventListener('submit', async e => {
+            e.preventDefault();
+            const f = e.target;
+            const nombre = f.nombre.value.trim();
+            const cantidad = parseInt(f.cantidad.value, 10);
+            if (!nombre || !f.categoria.value) return toast('Completá el nombre y la categoría');
+            const sameCat = Object.values(gifts).filter(g => g.categoria === f.categoria.value);
+            const id = `${slug(nombre)}-${randomId()}`;
+            try {
+                await setDoc(doc(db, 'regalos', id), {
+                    nombre, detalle: f.detalle.value.trim() || null, categoria: f.categoria.value,
+                    cantidad, activo: true, reservados: 0,
+                    orden: Math.max(0, ...sameCat.map(g => g.orden ?? 0)) + 1
+                });
+                f.nombre.value = ''; f.detalle.value = ''; f.cantidad.value = 1;
+                toast(`✓ "${nombre}" agregado`);
+            } catch (err) { toast('No se pudo agregar: ' + err.message); }
+        });
+
+        // ================= CATEGORÍAS =================
+        function renderCategories() {
+            if (document.activeElement?.closest('#cat-rows')) return;
+            const count = id => Object.values(gifts).filter(g => g.categoria === id).length;
+            $('cat-rows').innerHTML = sortedCats().map(c => `
+                <tr data-id="${esc(c.id)}">
+                    <td><input data-f="icono" value="${esc(c.icono || '')}" maxlength="4" style="width:60px"></td>
+                    <td><input data-f="nombre" value="${esc(c.nombre)}" maxlength="60" style="min-width:220px"></td>
+                    <td><input type="number" data-f="orden" value="${c.orden ?? 0}"></td>
+                    <td>${count(c.id)}</td>
+                    <td><button class="btn small" data-del ${count(c.id) ? 'disabled title="Mové o eliminá sus regalos primero"' : ''}>Eliminar</button></td>
+                </tr>`).join('') || '<tr><td colspan="5" class="muted">No hay categorías.</td></tr>';
+        }
+
+        $('cat-rows').addEventListener('change', async e => {
+            const input = e.target.closest('[data-f]');
+            const id = e.target.closest('tr')?.dataset.id;
+            if (!input || !id) return;
+            const f = input.dataset.f;
+            let value = input.value.trim();
+            if (f === 'nombre' && !value) { input.value = categories[id].nombre; return toast('El nombre no puede quedar vacío'); }
+            if (f === 'orden') value = Number(value) || 0;
+            await updateDoc(doc(db, 'categorias', id), { [f]: value }).then(() => toast('✓ Guardado')).catch(err => toast('No se pudo guardar: ' + err.message));
+            input.blur();
+            renderAll();
+        });
+
+        $('cat-rows').addEventListener('click', async e => {
+            const btn = e.target.closest('[data-del]');
+            if (!btn) return;
+            const c = categories[btn.closest('tr').dataset.id];
+            if (!confirm(`¿Eliminar la categoría "${c.nombre}"?`)) return;
+            await deleteDoc(doc(db, 'categorias', c.id)).catch(err => toast('No se pudo eliminar: ' + err.message));
+        });
+
+        $('add-cat').addEventListener('submit', async e => {
+            e.preventDefault();
+            const f = e.target;
+            const nombre = f.nombre.value.trim();
+            if (!nombre) return;
+            const id = categories[slug(nombre)] ? `${slug(nombre)}-${randomId()}` : slug(nombre);
+            await setDoc(doc(db, 'categorias', id), {
+                nombre, icono: f.icono.value.trim() || '🎁',
+                orden: Math.max(0, ...Object.values(categories).map(c => c.orden ?? 0)) + 1
+            }).then(() => { f.reset(); toast(`✓ Categoría "${nombre}" agregada`); }).catch(err => toast('No se pudo agregar: ' + err.message));
+        });
+
+        // ================= IMPORTAR LISTA INICIAL =================
+        // Carga seed.json y migra las reservas con formato anterior (reservas/{regaloId}) al nuevo (reservas/{regaloId__token}).
+        $('import').onclick = async () => {
+            if (Object.keys(gifts).length) return;
+            $('import').disabled = true;
+            try {
+                const seed = await (await fetch('seed.json', { cache: 'no-store' })).json();
+                const old = (await getDocs(collection(db, 'reservas'))).docs.filter(d => !d.id.includes('__'));
+                const reservedCount = {};
+                old.forEach(d => { reservedCount[d.id] = (reservedCount[d.id] || 0) + 1; });
+                const batch = writeBatch(db);
+                seed.categorias.forEach(({ id, ...c }) => batch.set(doc(db, 'categorias', id), c));
+                seed.regalos.forEach(({ id, ...g }) => {
+                    const reservados = reservedCount[id] || 0;
+                    batch.set(doc(db, 'regalos', id), { ...g, detalle: g.detalle || null, cantidad: Math.max(g.cantidad, reservados), activo: true, reservados });
+                });
+                old.forEach(d => {
+                    const { token, fecha } = d.data();
+                    batch.set(doc(db, 'reservas', `${d.id}__${token}`), { regaloId: d.id, token, fecha });
+                    batch.delete(d.ref);
+                });
+                await batch.commit();
+                toast(`✓ Importados ${seed.regalos.length} regalos${old.length ? ` y migradas ${old.length} reservas` : ''}`);
+            } catch (err) {
+                toast('No se pudo importar: ' + err.message);
+            } finally {
+                $('import').disabled = false;
+            }
+        };
+
+        // ================= RESERVAS =================
+        $('q').oninput = renderReservations;
+        $('show-cancelled').onchange = renderReservations;
+        $('csv').onclick = downloadCsv;
 
         function estado(r) {
             const c = cancelaciones[r.id];
-            if (!c) return { activa: true, texto: 'Activa' };
-            return {
+            if (c) return {
                 activa: false,
                 texto: c.porAdmin ? `Liberada por admin (${c.adminEmail || ''})` : `Cancelada por invitado${c.desdeMismoDispositivo ? ' (mismo dispositivo)' : ' (con PIN)'}`,
                 fecha: fmt(c.fecha),
                 ip: c.ip
             };
+            if (!publicRes[r.id]) return { activa: false, texto: 'Sin reserva pública' };
+            return { activa: true, texto: 'Activa' };
         }
 
-        function render() {
+        function renderReservations() {
             const q = $('q').value.toLowerCase();
             const showCancelled = $('show-cancelled').checked;
             const list = reservas
@@ -252,8 +630,9 @@
                 .filter(r => showCancelled || r.estado.activa)
                 .filter(r => JSON.stringify(r).toLowerCase().includes(q))
                 .sort((a, b) => ms(b.fecha) - ms(a.fecha));
-            const activas = reservas.filter(r => !cancelaciones[r.id]).length;
-            status(`${activas} reservas activas · ${reservas.length - activas} canceladas · conectado como ${auth.currentUser?.email}`);
+            const activas = reservas.filter(r => estado(r).activa).length;
+            const units = Object.values(gifts).filter(g => g.activo).reduce((n, g) => n + g.cantidad, 0);
+            status(`${Object.keys(gifts).length} regalos (${units} unidades) · ${activas} reservas activas · ${reservas.length - activas} canceladas · ${auth.currentUser?.email}`);
             $('rows').innerHTML = list.map(r => `
                 <tr class="${r.estado.activa ? '' : 'cancelled'}">
                     <td>${esc(fmt(r.fecha))}</td>
@@ -265,20 +644,26 @@
                     <td><span class="badge ${r.estado.activa ? 'ok' : 'off'}">${esc(r.estado.texto)}</span>
                         ${r.estado.fecha ? `<small>${esc(r.estado.fecha)}${r.estado.ip ? ' · IP ' + esc(r.estado.ip) : ''}</small>` : ''}</td>
                     <td>${r.estado.activa ? `<button class="btn small" data-id="${esc(r.id)}">Liberar</button>` : ''}</td>
-                </tr>`).join('');
+                </tr>`).join('') || '<tr><td colspan="8" class="muted">No hay reservas.</td></tr>';
             $('rows').querySelectorAll('button[data-id]').forEach(b => b.onclick = () => release(b.dataset.id));
         }
 
         async function release(id) {
             const r = reservas.find(x => x.id === id);
             if (!r || !confirm(`¿Liberar "${r.regalo}" (reservado por ${r.nombre})? Volverá a estar disponible.`)) return;
-            const batch = writeBatch(db);
-            batch.delete(doc(db, 'reservas', r.regaloId));
-            batch.set(doc(db, 'cancelaciones', id), {
-                regaloId: r.regaloId, token: r.token, regalo: r.regalo,
-                porAdmin: true, adminEmail: auth.currentUser.email, fecha: serverTimestamp()
-            });
-            await batch.commit().catch(e => alert('No se pudo liberar: ' + e.message));
+            try {
+                await runTransaction(db, async tx => {
+                    const ref = doc(db, 'regalos', r.regaloId);
+                    const g = await tx.get(ref);
+                    if (g.exists()) tx.update(ref, { reservados: Math.max(0, (g.data().reservados || 0) - 1), ultimoToken: r.token });
+                    tx.delete(doc(db, 'reservas', id));
+                    tx.set(doc(db, 'cancelaciones', id), {
+                        regaloId: r.regaloId, token: r.token, regalo: r.regalo,
+                        porAdmin: true, adminEmail: auth.currentUser.email, fecha: serverTimestamp()
+                    });
+                });
+                toast('✓ Reserva liberada');
+            } catch (e) { alert('No se pudo liberar: ' + e.message); }
         }
 
         function downloadCsv() {

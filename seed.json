@@ -1,0 +1,778 @@
+{
+ "categorias": [
+  {
+   "id": "ropa-y-vestimenta",
+   "nombre": "Ropa y Vestimenta",
+   "icono": "👕",
+   "orden": 1
+  },
+  {
+   "id": "higiene-y-cuidado-personal",
+   "nombre": "Higiene y Cuidado Personal",
+   "icono": "🛁",
+   "orden": 2
+  },
+  {
+   "id": "alimentacion-y-lactancia",
+   "nombre": "Alimentación y Lactancia",
+   "icono": "🍼",
+   "orden": 3
+  },
+  {
+   "id": "sueno-y-descanso",
+   "nombre": "Sueño y Descanso",
+   "icono": "🌙",
+   "orden": 4
+  },
+  {
+   "id": "paseo-y-viaje",
+   "nombre": "Paseo y Viaje",
+   "icono": "🚼",
+   "orden": 5
+  },
+  {
+   "id": "juego-estimulacion-y-seguridad",
+   "nombre": "Juego, Estimulación y Seguridad",
+   "icono": "🧩",
+   "orden": 6
+  }
+ ],
+ "regalos": [
+  {
+   "id": "bodies-de-algodon-manga-corta",
+   "nombre": "Bodies de algodón manga corta",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 1
+  },
+  {
+   "id": "bodies-de-algodon-manga-larga",
+   "nombre": "Bodies de algodón manga larga",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 2
+  },
+  {
+   "id": "shorts",
+   "nombre": "Shorts",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 3
+  },
+  {
+   "id": "monitos",
+   "nombre": "Monitos",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 4
+  },
+  {
+   "id": "pijamas",
+   "nombre": "Pijamas",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 5
+  },
+  {
+   "id": "mamelucos-de-una-pieza",
+   "nombre": "Mamelucos de una pieza",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 6
+  },
+  {
+   "id": "pantalones-con-pie",
+   "nombre": "Pantalones con pie",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 7
+  },
+  {
+   "id": "pantalones-sin-pie",
+   "nombre": "Pantalones sin pie",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 8
+  },
+  {
+   "id": "camisetas-interiores",
+   "nombre": "Camisetas interiores",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 9
+  },
+  {
+   "id": "camisetas-tipo-seminario",
+   "nombre": "Camisetas tipo seminario",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 10
+  },
+  {
+   "id": "cardigans",
+   "nombre": "Cárdigans",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 11
+  },
+  {
+   "id": "sueteres-ligeros",
+   "nombre": "Suéteres ligeros",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 12
+  },
+  {
+   "id": "chaquetas",
+   "nombre": "Chaquetas",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 13
+  },
+  {
+   "id": "abrigos",
+   "nombre": "Abrigos",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 14
+  },
+  {
+   "id": "gorros-de-algodon",
+   "nombre": "Gorros de algodón",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 15
+  },
+  {
+   "id": "sombreros-para-el-sol",
+   "nombre": "Sombreros para el sol",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 16
+  },
+  {
+   "id": "medias-o-calcetines",
+   "nombre": "Medias o calcetines",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 17
+  },
+  {
+   "id": "zapatitos-de-tela-o-patucos",
+   "nombre": "Zapatitos de tela o patucos",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 18
+  },
+  {
+   "id": "baberos-de-tela",
+   "nombre": "Baberos de tela",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 19
+  },
+  {
+   "id": "baberos-impermeables-o-de-bandana",
+   "nombre": "Baberos impermeables o de bandana",
+   "categoria": "ropa-y-vestimenta",
+   "detalle": "0-3 / 3-6 / 3-9 meses",
+   "cantidad": 1,
+   "orden": 20
+  },
+  {
+   "id": "panales-desechables",
+   "nombre": "Pañales desechables",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": "P / M / G",
+   "cantidad": 1,
+   "orden": 1
+  },
+  {
+   "id": "panales-de-tela",
+   "nombre": "Pañales de tela",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 2
+  },
+  {
+   "id": "toallitas-humedas-para-bebe",
+   "nombre": "Toallitas húmedas para bebé",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 3
+  },
+  {
+   "id": "algodon-en-trozos-o-toallitas-de-algodon-seco",
+   "nombre": "Algodón en trozos o toallitas de algodón seco",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 4
+  },
+  {
+   "id": "crema-para-la-dermatitis-de-panal",
+   "nombre": "Crema para la dermatitis de pañal",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 5
+  },
+  {
+   "id": "jabon-liquido-neutro-para-bebe",
+   "nombre": "Jabón líquido neutro para bebé",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 6
+  },
+  {
+   "id": "champu-especial-para-bebes",
+   "nombre": "Champú especial para bebés",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 7
+  },
+  {
+   "id": "locion-o-crema-hidratante-corporal",
+   "nombre": "Loción o crema hidratante corporal",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 8
+  },
+  {
+   "id": "banera-para-bebe",
+   "nombre": "Bañera para bebé",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 9
+  },
+  {
+   "id": "toalla-de-bano-con-capucha",
+   "nombre": "Toalla de baño con capucha",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 10
+  },
+  {
+   "id": "esponja-natural-o-suave",
+   "nombre": "Esponja natural o suave",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 11
+  },
+  {
+   "id": "cepillo-de-cerdas-suaves-para-el-cabello",
+   "nombre": "Cepillo de cerdas suaves para el cabello",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 12
+  },
+  {
+   "id": "bastoncillos-de-algodon-con-tope-de-seguridad",
+   "nombre": "Bastoncillos de algodón con tope de seguridad",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 13
+  },
+  {
+   "id": "suero-fisiologico-en-monodosis",
+   "nombre": "Suero fisiológico en monodosis",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 14
+  },
+  {
+   "id": "aspirador-nasal",
+   "nombre": "Aspirador nasal",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 15
+  },
+  {
+   "id": "termometro-digital",
+   "nombre": "Termómetro digital",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 16
+  },
+  {
+   "id": "alcohol-al-70-para-el-cuidado-del-ombligo",
+   "nombre": "Alcohol al 70% (para el cuidado del ombligo)",
+   "categoria": "higiene-y-cuidado-personal",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 17
+  },
+  {
+   "id": "biberones-de-cristal-o-plastico-libre-de-bpa",
+   "nombre": "Biberones de cristal o plástico libre de BPA",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 1
+  },
+  {
+   "id": "tetinas-de-flujo-lento-o-adecuado-a-la-edad",
+   "nombre": "Tetinas de flujo lento o adecuado a la edad",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 2
+  },
+  {
+   "id": "escobilla-para-limpiar-biberones",
+   "nombre": "Escobilla para limpiar biberones",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 3
+  },
+  {
+   "id": "esterilizador-de-biberones",
+   "nombre": "Esterilizador de biberones",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 4
+  },
+  {
+   "id": "calienta-biberones-electrico",
+   "nombre": "Calienta biberones eléctrico",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 5
+  },
+  {
+   "id": "dosificador-de-leche-en-polvo",
+   "nombre": "Dosificador de leche en polvo",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 6
+  },
+  {
+   "id": "almohada-o-cojin-de-lactancia",
+   "nombre": "Almohada o cojín de lactancia",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 7
+  },
+  {
+   "id": "protectores-de-lactancia-para-la-madre",
+   "nombre": "Protectores de lactancia para la madre",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 8
+  },
+  {
+   "id": "crema-para-pezones",
+   "nombre": "Crema para pezones",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 9
+  },
+  {
+   "id": "extractor-de-leche-materna-manual-o-electrico",
+   "nombre": "Extractor de leche materna (manual o eléctrico)",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 10
+  },
+  {
+   "id": "bolsas-de-almacenamiento-de-leche-materna",
+   "nombre": "Bolsas de almacenamiento de leche materna",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 11
+  },
+  {
+   "id": "panos-o-toallas-de-eructo-de-muselina",
+   "nombre": "Paños o toallas de eructo de muselina",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 12
+  },
+  {
+   "id": "chupones-o-chupetes",
+   "nombre": "Chupones o chupetes",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 13
+  },
+  {
+   "id": "cadenita-o-portachupetes",
+   "nombre": "Cadenita o portachupetes",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 14
+  },
+  {
+   "id": "baberos-grandes-para-la-etapa-de-alimentacion-complementaria",
+   "nombre": "Baberos grandes para la etapa de alimentación complementaria",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 15
+  },
+  {
+   "id": "platos-y-boles-con-ventosa",
+   "nombre": "Platos y boles con ventosa",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 16
+  },
+  {
+   "id": "cucharas-de-silicona-suave",
+   "nombre": "Cucharas de silicona suave",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 17
+  },
+  {
+   "id": "vasos-de-aprendizaje-o-vaso-entrenador",
+   "nombre": "Vasos de aprendizaje o vaso entrenador",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 18
+  },
+  {
+   "id": "trona-o-silla-alta-para-comer",
+   "nombre": "Trona o silla alta para comer",
+   "categoria": "alimentacion-y-lactancia",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 19
+  },
+  {
+   "id": "cuna-moises-o-moises-portatil",
+   "nombre": "Cuna moisés o moisés portátil",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 1
+  },
+  {
+   "id": "colchon-de-cuna-firme",
+   "nombre": "Colchón de cuna firme",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 2
+  },
+  {
+   "id": "protector-de-colchon-impermeable",
+   "nombre": "Protector de colchón impermeable",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 3
+  },
+  {
+   "id": "sabanas-ajustables-para-cuna",
+   "nombre": "Sábanas ajustables para cuna",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 4
+  },
+  {
+   "id": "mantas-ligeras-de-algodon",
+   "nombre": "Mantas ligeras de algodón",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 5
+  },
+  {
+   "id": "mantas-termicas-o-acolchadas",
+   "nombre": "Mantas térmicas o acolchadas",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 6
+  },
+  {
+   "id": "sacos-de-dormir-para-bebe",
+   "nombre": "Sacos de dormir para bebé",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 7
+  },
+  {
+   "id": "mantas-o-muselinas-para-envolver-al-bebe",
+   "nombre": "Mantas o muselinas para envolver al bebé",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 8
+  },
+  {
+   "id": "monitor-de-audio-o-camara-de-video-para-bebes",
+   "nombre": "Monitor de audio o cámara de video para bebés",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 9
+  },
+  {
+   "id": "luz-de-noche-tenue",
+   "nombre": "Luz de noche tenue",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 10
+  },
+  {
+   "id": "maquina-de-ruido-blanco",
+   "nombre": "Máquina de ruido blanco",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 11
+  },
+  {
+   "id": "movil-musical-para-la-cuna",
+   "nombre": "Móvil musical para la cuna",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 12
+  },
+  {
+   "id": "humidificador-de-aire",
+   "nombre": "Humidificador de aire",
+   "categoria": "sueno-y-descanso",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 13
+  },
+  {
+   "id": "bolso-o-panalera",
+   "nombre": "Bolso o pañalera",
+   "categoria": "paseo-y-viaje",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 1
+  },
+  {
+   "id": "cambiador-portatil-plegable",
+   "nombre": "Cambiador portátil plegable",
+   "categoria": "paseo-y-viaje",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 2
+  },
+  {
+   "id": "portabebes-ergonomico-o-fular-de-porteo",
+   "nombre": "Portabebés ergonómico o fular de porteo",
+   "categoria": "paseo-y-viaje",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 3
+  },
+  {
+   "id": "protector-para-la-lluvia-del-cochecito",
+   "nombre": "Protector para la lluvia del cochecito",
+   "categoria": "paseo-y-viaje",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 4
+  },
+  {
+   "id": "mosquitero",
+   "nombre": "Mosquitero",
+   "categoria": "paseo-y-viaje",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 5
+  },
+  {
+   "id": "sombrilla-para-el-cochecito",
+   "nombre": "Sombrilla para el cochecito",
+   "categoria": "paseo-y-viaje",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 6
+  },
+  {
+   "id": "gimnasio-para-suelo-con-arcos-de-juego",
+   "nombre": "Gimnasio para suelo con arcos de juego",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 1
+  },
+  {
+   "id": "manta-de-actividades",
+   "nombre": "Manta de actividades",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 2
+  },
+  {
+   "id": "juguetes-sensoriales-de-tela",
+   "nombre": "Juguetes sensoriales de tela",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 3
+  },
+  {
+   "id": "libros-de-carton-o-de-bano",
+   "nombre": "Libros de cartón o de baño",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 4
+  },
+  {
+   "id": "mordedores-de-silicona-refrigerables",
+   "nombre": "Mordedores de silicona refrigerables",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 5
+  },
+  {
+   "id": "sonajeros-ligeros",
+   "nombre": "Sonajeros ligeros",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 6
+  },
+  {
+   "id": "parque-infantil-o-corralito-portatil",
+   "nombre": "Parque infantil o corralito portátil",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 7
+  },
+  {
+   "id": "espejo-de-juguete-irrompible",
+   "nombre": "Espejo de juguete irrompible",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 8
+  },
+  {
+   "id": "bloques-de-construccion-grandes-y-suaves",
+   "nombre": "Bloques de construcción grandes y suaves",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 9
+  },
+  {
+   "id": "protectores-de-enchufes",
+   "nombre": "Protectores de enchufes",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 10
+  },
+  {
+   "id": "esquineros-de-silicona-para-muebles",
+   "nombre": "Esquineros de silicona para muebles",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 11
+  },
+  {
+   "id": "bloqueadores-de-puertas-y-cajones",
+   "nombre": "Bloqueadores de puertas y cajones",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 12
+  },
+  {
+   "id": "orinal-o-bacinica-para-etapas-posteriores",
+   "nombre": "Orinal o bacinica (para etapas posteriores)",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 13
+  },
+  {
+   "id": "reductor-de-bano-o-asiento-de-entrenamiento",
+   "nombre": "Reductor de baño o asiento de entrenamiento",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 14
+  },
+  {
+   "id": "maleta-o-organizador-de-juguetes",
+   "nombre": "Maleta o organizador de juguetes",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 15
+  },
+  {
+   "id": "termometro-ambiental-para-la-habitacion",
+   "nombre": "Termómetro ambiental para la habitación",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 16
+  },
+  {
+   "id": "cesto-para-ropa-sucia-de-bebe",
+   "nombre": "Cesto para ropa sucia de bebé",
+   "categoria": "juego-estimulacion-y-seguridad",
+   "detalle": null,
+   "cantidad": 1,
+   "orden": 17
+  }
+ ]
+}
