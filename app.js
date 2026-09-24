@@ -178,7 +178,6 @@ function cardHtml(g) {
         : `<button class="cancel-link" type="button" data-action="cancel">${mine ? 'Cancelar mi reserva' : '¿Ya lo reservaste? Cancelar con PIN'}</button>`;
     return `
         <article class="gift-card ${full && !mine ? 'reserved' : ''} ${mine ? 'mine' : ''}" data-id="${esc(g.id)}">
-            <div class="check-wrap"><input type="checkbox" aria-hidden="true" tabindex="-1" disabled ${full ? 'checked' : ''}></div>
             <div class="gift-main">
                 <div class="gift-name">${esc(g.nombre)}</div>
                 ${g.detalle ? `<div class="ref">📏 ${esc(g.detalle)}</div>` : ''}
@@ -237,13 +236,29 @@ function giftTitle(g) {
     return g.detalle ? `${g.nombre} (${g.detalle})` : g.nombre;
 }
 
+// Datos de quien ya reservó desde este dispositivo: no se vuelven a pedir en la siguiente reserva.
+const PROFILE_KEY = 'liam-perfil';
+function profile() {
+    const p = store(PROFILE_KEY, null);
+    return p && p.nombre?.length >= 2 && isPin(p.pin) ? p : null;
+}
+function showProfileFields(show) {
+    $('profile-fields').classList.toggle('hidden', !show);
+    $('profile-known').classList.toggle('hidden', show);
+}
+
 function openReserve(g) {
     current = g.id;
+    const p = profile();
     $('modal-gift').textContent = giftTitle(g);
     $('form-error').textContent = '';
-    $('f-name').value = store('liam-nombre', '') || '';
+    $('f-message').value = '';
     $('f-pin').value = '';
-    openModal('modal', $('f-name').value ? 'f-pin' : 'f-name');
+    $('f-name').value = p?.nombre || '';
+    $('f-contact').value = p?.contacto || '';
+    $('known-name').textContent = p?.nombre || '';
+    showProfileFields(!p);
+    openModal('modal', p ? 'modal-submit' : 'f-name');
 }
 
 function openCancel(g) {
@@ -267,8 +282,10 @@ function busy(btn, on, label) {
 
 async function submitReserve(e) {
     e.preventDefault();
-    const nombre = $('f-name').value.trim().replace(/\s+/g, ' ');
-    const pin = $('f-pin').value.trim();
+    const known = $('profile-fields').classList.contains('hidden') && profile();
+    const nombre = known ? known.nombre : $('f-name').value.trim().replace(/\s+/g, ' ');
+    const contacto = known ? known.contacto : $('f-contact').value.trim().slice(0, 80) || null;
+    const pin = known ? known.pin : $('f-pin').value.trim();
     if (nombre.length < 2) { $('form-error').textContent = 'Por favor escribí tu nombre.'; return $('f-name').focus(); }
     if (!isPin(pin)) { $('form-error').textContent = 'El PIN debe tener exactamente 4 números.'; return $('f-pin').focus(); }
     const g = gifts[current];
@@ -281,18 +298,20 @@ async function submitReserve(e) {
             regalo: g.nombre,
             categoria: categories[g.categoria]?.nombre || g.categoria,
             nombre,
-            contacto: $('f-contact').value.trim().slice(0, 80) || null,
+            contacto,
             mensaje: $('f-message').value.trim().slice(0, 300) || null,
             pinHash: await pinHash(pin, token),
             ...net,
             ...deviceInfo()
         });
         save(MINE_KEY, { ...store(MINE_KEY, {}), [rid]: { regaloId: g.id, token, pin } });
-        save('liam-nombre', nombre);
+        save(PROFILE_KEY, { nombre, contacto, pin });
         $('reserve-form').reset();
         closeModals();
         render();
-        toast(`¡Gracias, ${nombre.split(' ')[0]}! Reservaste "${g.nombre}" 💙 Recordá tu PIN ${pin} por si querés cancelar.`, 8000);
+        toast(known
+            ? `¡Gracias, ${nombre.split(' ')[0]}! También reservaste "${g.nombre}" 💙`
+            : `¡Gracias, ${nombre.split(' ')[0]}! Reservaste "${g.nombre}" 💙 Recordá tu PIN ${pin}: sirve para cancelar cualquiera de tus reservas.`, 8000);
     } catch (err) {
         console.error(err);
         $('form-error').textContent = ['agotado', 'permission-denied'].includes(err.code)
@@ -354,6 +373,12 @@ async function init() {
     });
     document.querySelectorAll('.pin-input').forEach(i => i.addEventListener('input', () => { i.value = i.value.replace(/\D/g, '').slice(0, 4); }));
     $('reserve-form').addEventListener('submit', submitReserve);
+    $('change-profile').addEventListener('click', () => {
+        $('f-name').value = '';
+        $('f-contact').value = '';
+        showProfileFields(true);
+        $('f-name').focus();
+    });
     $('cancel-form').addEventListener('submit', submitCancel);
     document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModals));
     document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) closeModals(); }));

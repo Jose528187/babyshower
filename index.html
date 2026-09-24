@@ -204,7 +204,7 @@
 
         .gift-card {
             display: grid;
-            grid-template-columns: 32px minmax(0, 1fr) 112px 110px;
+            grid-template-columns: minmax(0, 1fr) 124px 124px;
             gap: 10px;
             align-items: center;
             background: rgba(255, 255, 255, .95);
@@ -217,12 +217,6 @@
         .gift-card:hover {
             box-shadow: 0 7px 20px rgba(153, 107, 77, .10);
             transform: translateY(-1px)
-        }
-
-        .gift-card input[type=checkbox] {
-            width: 19px;
-            height: 19px;
-            accent-color: var(--blue)
         }
 
         .gift-main {
@@ -458,6 +452,20 @@
             color: #9a8b80
         }
 
+        .known {
+            margin-bottom: 14px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: var(--blue-pale);
+            border: 1px solid #d7eafa;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .known .cancel-link {
+            display: block
+        }
+
         .cancel-text {
             font-size: 14px;
             line-height: 1.55;
@@ -496,13 +504,8 @@
 
         @media(max-width:720px) {
             .gift-card {
-                grid-template-columns: 30px 1fr;
+                grid-template-columns: 1fr;
                 gap: 8px
-            }
-
-            .reserve,
-            .state {
-                grid-column: 2
             }
 
             .hero {
@@ -636,18 +639,24 @@
         <form id="reserve-form" class="modal-box" novalidate>
             <h3 id="modal-title">Reservar regalo</h3>
             <div id="modal-gift" class="modal-gift"></div>
-            <label class="field">Tu nombre y apellido *
-                <input id="f-name" name="nombre" required minlength="2" maxlength="60" autocomplete="name">
-            </label>
-            <label class="field">Teléfono o email (opcional)
-                <input id="f-contact" name="contacto" maxlength="80" autocomplete="tel">
-            </label>
+            <div id="profile-known" class="known hidden">
+                Reservando como <b id="known-name"></b>, con el mismo PIN de tus otras reservas.
+                <button type="button" class="cancel-link" id="change-profile">No soy yo / cambiar datos</button>
+            </div>
+            <div id="profile-fields">
+                <label class="field">Tu nombre y apellido *
+                    <input id="f-name" name="nombre" required minlength="2" maxlength="60" autocomplete="name">
+                </label>
+                <label class="field">Teléfono o email (opcional)
+                    <input id="f-contact" name="contacto" maxlength="80" autocomplete="tel">
+                </label>
+                <label class="field">Elegí un PIN de 4 números *
+                    <input id="f-pin" class="pin-input" name="pin" required inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" placeholder="••••">
+                    <span class="hint">Se usa para todas tus reservas. Lo vas a necesitar si querés cancelar desde otro dispositivo.</span>
+                </label>
+            </div>
             <label class="field">Mensaje para Liam José (opcional)
                 <textarea id="f-message" name="mensaje" maxlength="300"></textarea>
-            </label>
-            <label class="field">Elegí un PIN de 4 números *
-                <input id="f-pin" class="pin-input" name="pin" required inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" placeholder="••••">
-                <span class="hint">Lo vas a necesitar si querés cancelar la reserva desde otro dispositivo.</span>
             </label>
             <p class="privacy">Tu nombre solo será visible para los papás. Para evitar reservas duplicadas se registra la fecha, el dispositivo y la dirección IP.</p>
             <p id="form-error" class="form-error" role="alert"></p>
